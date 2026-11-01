@@ -5,6 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <deploy.directory>C:\Users\Alex\deploy</deploy.directory>
     <!-- RELEASE follows JitPack's latest published release; -U refreshes metadata. -->
     <!-- Override with -Dneocore.version=v0.0.1 for a reproducible release build. -->
     <neocore.version>RELEASE</neocore.version>
@@ -26,6 +27,26 @@
         <configuration>
           <release>25</release>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-plugin-to-deploy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                      tofile="${deploy.directory}/${project.artifactId}.jar"
+                      overwrite="true"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
