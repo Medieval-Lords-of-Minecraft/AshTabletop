@@ -1,0 +1,9 @@
+{
+	"id":"ashtabletop",
+	"name":"AshTabletop",
+	"version":"0.1.0-SNAPSHOT",
+	"description":"A suite of tabletop chat plugins!",
+	"authors":["Ascheladd"],
+	"dependencies":[],
+	"main":"me.neoblade298.ashtabletop.AshTabletop"
+}

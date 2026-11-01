@@ -1,0 +1,16 @@
+name: AshTabletop
+main: me.neoblade298.ashtabletop.AshTabletop
+author: [Ascheladd]
+depends: [NeoCore]
+version: 1.0
+api-version: 1.16
+commands:
+   tt:
+      description: Main command
+      usage: /tt
+   tta:
+      description: Admin command
+      usage: /tta
+   thecrew:
+      description: Command for the crew
+      usage: /thecrew
