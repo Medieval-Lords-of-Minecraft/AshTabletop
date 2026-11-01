@@ -27,7 +27,7 @@ public class CmdTabletopReturn extends Subcommand {
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();
 		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
-		if (sess == null && sess instanceof GameInstance) {
+		if (!(sess instanceof GameInstance)) {
 			Util.msg(s, Component.text("You're not in a game!", NamedTextColor.RED));
 			return;
 		}

@@ -15,7 +15,7 @@ directory to plugins\AshTabletop on the Paper server, including:
   The Crew\tasks.yml
 These game definitions are external files and are not bundled in this repo.
 
-Commands: /tt, /tta, /thecrew.
+Commands: /tt, /tta, /thecrew, /mono (alias /monopoly), /uno.
 tabletop.use is enabled for everyone; tabletop.admin defaults to operators.
 Games and player lookup now cover only players on this Paper server, not
 players across a proxy network. Sessions are in memory and end on shutdown.
@@ -24,3 +24,33 @@ The Crew's trick-prediction task uses a native Paper dialog with a whole-number
 slider from 0 to the game's total tricks. Accept stores the prediction; Cancel
 or Escape leaves the task unassigned so it can be selected again. Chat is not
 intercepted for input. Clients must support Minecraft dialogs (1.21.6+).
+
+Monopoly and Uno are included in this plugin; do not install NeoMonopoly or
+NeoUno alongside it because their command names conflict. Their default
+config.yml and manual.yml files are installed into plugins\AshTabletop\Monopoly
+and plugins\AshTabletop\Uno on first enable. Existing files are never replaced.
+Monopoly's board and Chance/Community Chest cards can be edited in its config.
+Configuration errors are logged and prevent the plugin from enabling.
+The Crew still requires its existing external configuration as described above.
+
+Create a lobby: /tt create monopoly <name> or /tt create uno <name>.
+Use /tt invite <player>, /tt join <name>, then /tt start.
+Before starting, the host can use /tt set money <amount> for Monopoly
+(default 6000), or /tt set points <score> for Uno (0 = continuous rounds).
+Read /tt manual monopoly or /tt manual uno for gameplay and command details.
+/mono menu and /uno menu open Paper dialogs; clickable chat and commands
+remain available. Closing a dialog makes no gameplay choice.
+
+Disconnected players retain their game seats. Play waits when an offline
+player's action is required; the host may remove them with /tt kick <player>.
+They can reconnect to resume. /tt leave exits; /tt spectate <name> watches.
+The host can use /tt return to return online players to a lobby. Offline
+players are removed when the game ends. Games do not persist across restarts.
+
+The ports retain the sibling games' house rules: Monopoly starts at $6000,
+unmortgaging costs the property's full price, and the third failed jail roll
+costs $100 without moving. Uno stacks matching draw cards, automatically plays
+matching drawn cards, and scores all action/wild cards at 10 points. Reverse
+with two players passes to the opponent. Scored rounds now continue correctly
+and finish when the target is reached. The ports correct legacy bookkeeping,
+deck exhaustion, mortgage, jail, bankruptcy, and auction deadlocks.

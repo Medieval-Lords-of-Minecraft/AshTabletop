@@ -23,6 +23,13 @@ public class GamePlayer {
 	public Player getPlayer() {
 		return p;
 	}
+	public void reconnect(Player player) {
+		if (!uuid.equals(player.getUniqueId())) {
+			throw new IllegalArgumentException("Cannot replace a game player with a different UUID.");
+		}
+		p = player;
+		name = player.getName();
+	}
 	@Override
 	public String toString() {
 		return name;

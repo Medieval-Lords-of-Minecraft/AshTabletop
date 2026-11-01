@@ -33,6 +33,16 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 			Util.msgRaw(s, NeoCore.miniMessage().deserialize("<red>You need at least <yellow>" + game.getMinPlayers() + "</yellow> players to start!"));
 			return;
 		}
+		if (players.size() > game.getMaxPlayers()) {
+			Util.displayError(s, "This game allows at most " + game.getMaxPlayers() + " players.");
+			return;
+		}
+		for (UUID uuid : players) {
+			if (AshTabletop.findPlayer(uuid).isEmpty()) {
+				Util.displayError(s, "All lobby players must be online to start.");
+				return;
+			}
+		}
 		GameManager.startGame(this, onStart());
 	}
 
@@ -73,6 +83,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 
 		if (game.getMaxPlayers() <= players.size()) {
 			Util.displayError(p, "This lobby is full as it has a max of " + game.getMaxPlayers() + " players!");
+			return;
 		}
 
 		if (!isPublic) {
@@ -170,15 +181,16 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 			c = c.hoverEvent(HoverEvent.showText(SharedUtil.color("<gray><i>" + param.getDescription() +
 					"\n</i><white>Click to change parameter")));
 			c = c.clickEvent(ClickEvent.suggestCommand("/tt set " + param.getKey() + " " + param.get()));
+			b.append(c);
 		}
-		viewer.sendMessage(c);
+		viewer.sendMessage(b.build());
 		
 		// Player list
 		Util.msgRaw(viewer, Component.text("Players:", NamedTextColor.GRAY));
 		Util.msgRaw(viewer, SharedUtil.color("<gray>- <red>" + h.get().getName() + " </red>(<yellow>Host</yellow>)"));
 		b = Component.text();
 		Component kick = SharedUtil.color("<dark_gray> [<red>Click to kick!</red>]");
-		Component giveHost = SharedUtil.color("<dark_gray> [<red>Click to kick!</red>]");
+		Component giveHost = SharedUtil.color("<dark_gray> [<red>Click to give host!</red>]");
 		if (players.size() > 1) {
 			first = true;
 			for (UUID uuid : players) {
@@ -188,16 +200,18 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 				}
 				first = false;
 				Optional<Player> opt = AshTabletop.findPlayer(uuid);
-				b.append(Component.text("- ", NamedTextColor.GRAY));
+				if (opt.isEmpty()) continue;
+				b.append(Component.text("- " + opt.get().getName(), NamedTextColor.GRAY));
 				if (viewer.getUniqueId().equals(host)) {
 					kick = kick.hoverEvent(HoverEvent.showText(Component.text("Click to kick " + opt.get().getName())));
 					kick = kick.clickEvent(ClickEvent.suggestCommand("/tt kick " + opt.get().getName()));
 					
 					giveHost = giveHost.hoverEvent(HoverEvent.showText(Component.text("Click to give host to " + opt.get().getName())));
 					giveHost = giveHost.clickEvent(ClickEvent.suggestCommand("/tt sethost " + opt.get().getName()));
+					b.append(kick).append(giveHost);
 				}
 			}
-			viewer.sendMessage(c.append(kick).append(giveHost));
+			viewer.sendMessage(b.build());
 		}
 
 		c = SharedUtil.color("<dark_gray>[<gray>Click here to read about the game!</gray>]");
@@ -214,7 +228,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 	}
 	
 	public boolean isFull() {
-		return game.getMaxPlayers() > players.size();
+		return players.size() >= game.getMaxPlayers();
 	}
 
 	public HashSet<UUID> getPlayers() {

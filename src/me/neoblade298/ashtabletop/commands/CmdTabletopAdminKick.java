@@ -3,12 +3,10 @@ package me.neoblade298.ashtabletop.commands;
 import me.neoblade298.ashtabletop.AshTabletop;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
@@ -31,20 +29,15 @@ public class CmdTabletopAdminKick extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		Optional<Player> opt = AshTabletop.findPlayer(args[0]);
 		
-		if (opt.isEmpty()) {
-			Util.msg(s, Component.text("That player isn't online!", NamedTextColor.RED));
-			return;
-		}
-		
 		// Check if the name exists already, or player is already in a game
-		UUID uuid = opt.get().getUniqueId();
-		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
+		GameSession<? extends GamePlayer> sess = opt.isPresent()
+				? GameManager.getSession(opt.get().getUniqueId()) : GameManager.getPlayerSession(args[0]);
 		if (sess == null) {
 			Util.msg(s, Component.text("That player isn't in a game session!", NamedTextColor.RED));
 			return;
 		}
 
-		sess.adminKickPlayer(s, opt.get().getName());
+		sess.adminKickPlayer(s, args[0]);
 	}
 
 }

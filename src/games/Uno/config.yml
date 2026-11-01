@@ -1,0 +1,5 @@
+key: uno
+name: Uno
+description: Match colors and card types, stack draw cards, and remember to call Uno.
+min-players: 2
+max-players: 8

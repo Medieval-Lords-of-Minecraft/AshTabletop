@@ -1,11 +1,14 @@
 package me.neoblade298.ashtabletop;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.util.Util;
@@ -22,22 +25,32 @@ public abstract class Game {
 	private final Component header;
 	
 	public Game(File baseDir) {
-		NeoCore.loadFiles(new File(baseDir, "config.yml"), (cfg, file) -> {
-			key = cfg.getString("key");
-			name = cfg.getString("name");
-			desc = Component.text(cfg.getString("description"), NamedTextColor.GRAY);
-			minPlayers = cfg.getInt("min-players");
-			maxPlayers = cfg.getInt("max-players");
-		});
-		NeoCore.loadFiles(new File(baseDir, "manual.yml"), (cfg, file) -> {
-			manual = new Component[cfg.getKeys().size()];
+		YamlConfiguration cfg = load(new File(baseDir, "config.yml"));
+		key = cfg.getString("key");
+		name = cfg.getString("name");
+		String description = cfg.getString("description");
+		if (key == null || !key.matches("[a-z0-9_-]+") || name == null || name.isBlank()
+				|| description == null || !cfg.isInt("min-players") || !cfg.isInt("max-players")) {
+			throw new IllegalArgumentException("Invalid game metadata in " + baseDir);
+		}
+		desc = Component.text(description, NamedTextColor.GRAY);
+		minPlayers = cfg.getInt("min-players");
+		maxPlayers = cfg.getInt("max-players");
+		if (minPlayers < 1 || maxPlayers < minPlayers) {
+			throw new IllegalArgumentException("Invalid player limits in " + baseDir);
+		}
+		YamlConfiguration instructions = load(new File(baseDir, "manual.yml"));
+			manual = new Component[instructions.getKeys(false).size()];
 			int i = 0;
-			for (String key : cfg.getKeys()) {
-				String text = cfg.isType(key, String.class)
-						? cfg.getString(key) : String.join("", cfg.getStringList(key));
+			for (String page : instructions.getKeys(false)) {
+				if (!instructions.isString(page) && !instructions.isList(page)) {
+					throw new IllegalArgumentException("Invalid manual page " + page + " in " + baseDir);
+				}
+				String text = instructions.isString(page)
+						? instructions.getString(page) : String.join("", instructions.getStringList(page));
 				manual[i++] = NeoCore.miniMessage().deserialize(text);
 			}
-		});
+		if (manual.length == 0) throw new IllegalArgumentException("Empty manual in " + baseDir);
 		
 		GameManager.registerGame(this);
 		AshTabletop.logger().log(Level.INFO, "Registering " + key + "...");
@@ -49,6 +62,17 @@ public abstract class Game {
 		String manualStr = "<dark_gray>[<gray><click:run_command:'/tt manual " +
 				key +"'><hover:show_text:'Click here to read the manual!'>Click to read the manual for the game!</hover></click></gray>]";
 		manualButton = NeoCore.miniMessage().deserialize(manualStr);
+	}
+
+	private static YamlConfiguration load(File file) {
+		YamlConfiguration cfg = new YamlConfiguration();
+		try {
+			cfg.load(file);
+		}
+		catch (IOException | InvalidConfigurationException e) {
+			throw new IllegalArgumentException("Unable to load " + file, e);
+		}
+		return cfg;
 	}
 	
 	public String getKey() {

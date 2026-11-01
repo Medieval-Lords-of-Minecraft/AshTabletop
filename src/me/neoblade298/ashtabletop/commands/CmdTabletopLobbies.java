@@ -52,7 +52,7 @@ public class CmdTabletopLobbies extends Subcommand {
 		Builder b = Component.text().content(lob.isPublic() ? "Public Lobby" : "Private Lobby")
 				.color(lob.isPublic() ? NamedTextColor.GREEN : NamedTextColor.RED)
 				.append(Component.text("\nPlayercount: ", NamedTextColor.GRAY))
-				.append(Component.text(lob.getPlayers().size(), lob.isFull() ? NamedTextColor.GREEN : NamedTextColor.RED))
+				.append(Component.text(lob.getPlayers().size(), lob.isFull() ? NamedTextColor.RED : NamedTextColor.GREEN))
 				.append(Component.text(" / " + lob.getGame().getMaxPlayers()))
 				.append(Component.text("\n- "))
 				.append(Component.text(host.getName(), NamedTextColor.RED))

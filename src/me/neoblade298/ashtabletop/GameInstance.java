@@ -3,6 +3,7 @@ package me.neoblade298.ashtabletop;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.Locale;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,10 +35,14 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 
 	@Override
 	public void adminKickPlayer(CommandSender s, String name) {
-		Player p = AshTabletop.findPlayer(name).get();
-		GamePlayer gp = players.remove(name.toLowerCase());
+		GamePlayer gp = players.remove(name.toLowerCase(Locale.ROOT));
+		if (gp == null) {
+			Util.msgRaw(s, Component.text("That player isn't in this game!", NamedTextColor.RED));
+			return;
+		}
 		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the game by an admin!");
+		broadcast("<yellow>" + gp.getName() + " <gray>was kicked from the game by an admin!");
+		replaceHost(gp);
 		handleLeave(gp);
 	}
 	
@@ -55,25 +60,30 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 		
 		GamePlayer gp = players.remove(name.toLowerCase());
 		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the game!");
+		broadcast("<yellow>" + gp.getName() + " <gray>was kicked from the game!");
+		replaceHost(gp);
 		handleLeave(gp);
 	}
 
 	@Override
 	public void broadcast(String msg) {
 		for (GamePlayer gp : players.values()) {
+			if (!gp.getPlayer().isOnline()) continue;
 			Util.msgRaw(gp.getPlayer(), NeoCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
 		}
 		for (Player p : spectators) {
+			if (!p.isOnline()) continue;
 			Util.msgRaw(p, NeoCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
 		}
 	}
 	
 	public void broadcast(Component bc) {
 		for (GamePlayer gp : players.values()) {
+			if (!gp.getPlayer().isOnline()) continue;
 			gp.getPlayer().sendMessage(bc);
 		}
 		for (Player p : spectators) {
+			if (!p.isOnline()) continue;
 			p.sendMessage(bc);
 		}
 	}
@@ -83,7 +93,7 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 		if (players.containsKey(p.getName().toLowerCase())) {
 			GamePlayer gp = players.remove(p.getName().toLowerCase());
 			GameManager.removeFromSession(p.getUniqueId());
-			broadcast("<yellow>" + p.getName() + " <gray>left the lobby!");
+			broadcast("<yellow>" + p.getName() + " <gray>left the game!");
 			
 			if (p.getUniqueId().equals(host)) {
 				if (players.size() != 0) {
@@ -114,8 +124,47 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	
 	public void addSpectator(Player p) {
 		spectators.add(p);
+		GameManager.addToInstance(p, this);
 		broadcast("<yellow>" + p.getName() + " <gray>began spectating!");
 		onSpectate(p);
+	}
+
+	public void clearSpectators() {
+		for (Player spectator : spectators) {
+			GameManager.removeFromSession(spectator.getUniqueId());
+		}
+		spectators.clear();
+	}
+
+	private void replaceHost(GamePlayer removed) {
+		if (removed.getUniqueId().equals(host) && !players.isEmpty()) {
+			host = players.values().iterator().next().getUniqueId();
+			broadcast("The new host is <yellow>" + players.values().iterator().next().getName() + "</yellow>.");
+		}
+	}
+
+	public void reconnect(Player player) {
+		T gp = null;
+		for (T candidate : players.values()) {
+			if (candidate.getUniqueId().equals(player.getUniqueId())) {
+				gp = candidate;
+				break;
+			}
+		}
+		if (gp != null) {
+			players.remove(gp.getName().toLowerCase(Locale.ROOT));
+			gp.reconnect(player);
+			players.put(gp.getName().toLowerCase(Locale.ROOT), gp);
+		}
+		else {
+			spectators.removeIf(spectator -> spectator.getUniqueId().equals(player.getUniqueId()));
+			spectators.add(player);
+		}
+		onReconnect(player);
+	}
+
+	public void onReconnect(Player player) {
+		displayInfo(player, player);
 	}
 	
 	public void endGame() {
@@ -125,8 +174,10 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	public void displayKickList(CommandSender cmdUser) {
 		Player p = (Player) cmdUser;
 		Util.msgRaw(cmdUser, Component.text("Players:", NamedTextColor.GRAY));
+		String hostName = players.values().stream().filter(gp -> gp.getUniqueId().equals(host))
+				.map(GamePlayer::getName).findFirst().orElse("No host");
 		Component c = Component.text().content("- ").color(NamedTextColor.GRAY)
-				.append(Component.text(p.getName(), NamedTextColor.RED))
+				.append(Component.text(hostName, NamedTextColor.RED))
 				.append(Component.text(" ("))
 				.append(Component.text("Host", NamedTextColor.YELLOW))
 				.append(Component.text(")")).build();
@@ -147,16 +198,17 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 			Component kick = Component.text().content(" [").color(NamedTextColor.DARK_GRAY)
 					.append(Component.text("Click to kick", NamedTextColor.RED))
 					.append(Component.text("]")).build();
-			kick.hoverEvent(HoverEvent.showText(Component.text("Click to kick " + gp.getName())));
-			kick.clickEvent(ClickEvent.runCommand("/tt kick " + gp.getName()));
+			kick = kick.hoverEvent(HoverEvent.showText(Component.text("Click to kick " + gp.getName())));
+			kick = kick.clickEvent(ClickEvent.runCommand("/tt kick " + gp.getName()));
 			Component giveHost = Component.text().content(" [").color(NamedTextColor.DARK_GRAY)
 					.append(Component.text("Click to give host", NamedTextColor.RED))
 					.append(Component.text("]")).build();
-			kick.hoverEvent(HoverEvent.showText(Component.text("Click to give host to " + gp.getName())));
-			kick.clickEvent(ClickEvent.runCommand("/tt sethost " + gp.getName()));
+			giveHost = giveHost.hoverEvent(HoverEvent.showText(Component.text("Click to give host to " + gp.getName())));
+			giveHost = giveHost.clickEvent(ClickEvent.runCommand("/tt sethost " + gp.getName()));
 			
-			cmdUser.sendMessage(b.append(kick).append(giveHost).build());
+			b.append(kick).append(giveHost);
 		}
+		cmdUser.sendMessage(b.build());
 	}
 	
 	public abstract void onSpectate(Player p);

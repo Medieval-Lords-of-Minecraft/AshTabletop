@@ -2,15 +2,19 @@ package me.neoblade298.ashtabletop;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.Locale;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.ashtabletop.thecrew.TheCrew;
+import me.neoblade298.ashtabletop.monopoly.Monopoly;
+import me.neoblade298.ashtabletop.uno.Uno;
 
 public class GameManager implements Listener {
 	private static HashMap<String, GameLobby<? extends GamePlayer>> lobbies = new HashMap<String, GameLobby<? extends GamePlayer>>();
@@ -21,6 +25,17 @@ public class GameManager implements Listener {
 	public GameManager() {
 		// Creating instance of game registers it to games via Game.java
 		new TheCrew();
+		new Monopoly();
+		new Uno();
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		GameSession<? extends GamePlayer> session = inSession.get(player.getUniqueId());
+		if (session instanceof GameInstance<?> instance) {
+			instance.reconnect(player);
+		}
 	}
 	
 	// Kick player out of lobbies on disconnect, disband lobby if host is kicked
@@ -52,9 +67,17 @@ public class GameManager implements Listener {
 	}
 
     public static GameSession<? extends GamePlayer> getSession(String name) {
+		name = name.toLowerCase(Locale.ROOT);
     	if (lobbies.containsKey(name)) return lobbies.get(name);
     	return instances.get(name);
     }
+
+	public static GameSession<? extends GamePlayer> getPlayerSession(String playerName) {
+		for (GameInstance<?> instance : instances.values()) {
+			if (instance.getPlayers().containsKey(playerName.toLowerCase(Locale.ROOT))) return instance;
+		}
+		return null;
+	}
     
     public static GameSession<? extends GamePlayer> getSession(UUID uuid) {
     	return inSession.get(uuid);
@@ -100,11 +123,16 @@ public class GameManager implements Listener {
 			inSession.remove(gp.getUniqueId());
 		}
 		inst.broadcast("Due to " + reason + ", instance <yellow>" + inst.getName() + " </yellow>was disbanded.");
+		inst.clearSpectators();
 		instances.remove(inst.getName().toLowerCase());
 	}
 	
 	public static void removeFromSession(UUID uuid) {
 		inSession.remove(uuid);
+	}
+
+	public static void addToInstance(Player player, GameInstance<?> instance) {
+		inSession.put(player.getUniqueId(), instance);
 	}
 	
 	public static boolean sessionExists(String name) {
@@ -132,14 +160,17 @@ public class GameManager implements Listener {
 	}
 	
 	public static void registerGame(Game g) {
+		if (games.containsKey(g.getKey())) {
+			throw new IllegalArgumentException("Duplicate game key: " + g.getKey());
+		}
 		games.put(g.getKey(), g);
 	}
 	
 	public static void startGame(GameLobby<? extends GamePlayer> lob, GameInstance<? extends GamePlayer> inst) {
 		lob.broadcast("The game has started!");
 
-		lobbies.remove(lob.getName());
-		instances.put(inst.getName(), inst);
+		lobbies.remove(lob.getName().toLowerCase(Locale.ROOT));
+		instances.put(inst.getName().toLowerCase(Locale.ROOT), inst);
 		for (UUID uuid : lob.getPlayers()) {
 			inSession.put(uuid, inst);
 		}
@@ -147,14 +178,21 @@ public class GameManager implements Listener {
 	
 	public static void endGame(GameLobby<? extends GamePlayer> lob, GameInstance<? extends GamePlayer> inst) {
 		inst.broadcast("The game has ended and you've all been returned to the lobby.");
-		instances.remove(inst.getName());
-		lobbies.put(lob.getName(), lob);
+		instances.remove(inst.getName().toLowerCase(Locale.ROOT));
+		inst.clearSpectators();
 		for (GamePlayer gp : inst.getPlayers().values()) {
-			inSession.put(gp.getUniqueId(), lob);
-			lob.addPlayerForce(gp.getPlayer());
+			inSession.remove(gp.getUniqueId());
+			if (gp.getPlayer().isOnline()) {
+				lob.addPlayerForce(gp.getPlayer());
+			}
 		}
+		if (lob.getPlayers().isEmpty()) return;
+		if (!lob.getPlayers().contains(lob.getHost())) {
+			lob.host = lob.getPlayers().iterator().next();
+		}
+		lobbies.put(lob.getName().toLowerCase(Locale.ROOT), lob);
 		for (GamePlayer gp : inst.getPlayers().values()) {
-			lob.displayInfo(gp.getPlayer(), gp.getPlayer());
+			if (gp.getPlayer().isOnline()) lob.displayInfo(gp.getPlayer(), gp.getPlayer());
 		}
 	}
 }

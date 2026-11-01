@@ -51,6 +51,14 @@ public abstract class GameSession<T extends GamePlayer> {
 			Util.msgRaw(cmdUser, Component.text("That player isn't online!", NamedTextColor.RED));
 			return;
 		}
+		UUID candidate = p.get().getUniqueId();
+		boolean member = this instanceof GameLobby<?> lobby ? lobby.getPlayers().contains(candidate)
+				: this instanceof GameInstance<?> instance && instance.getPlayers().values().stream()
+						.anyMatch(player -> player.getUniqueId().equals(candidate));
+		if (!member) {
+			Util.displayError(cmdr, "The host must be a player in this session.");
+			return;
+		}
 		
 		host = p.get().getUniqueId();
 		broadcast("<yellow>" + cmdr.getName() + " <gray>set the game's host to </gray>" + p.get().getName());

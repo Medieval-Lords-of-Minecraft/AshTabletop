@@ -1,0 +1,20 @@
+1:
+  - '<gold>Monopoly</gold><newline>'
+  - 'Create: /tt create monopoly [lobby]. Invite/join with /tt, then /tt start.<newline>'
+  - 'The host can set starting cash with /tt set money [amount]; default $6000.<newline>'
+  - 'Roll with /mono roll to decide turn order, then to move. Resolve purchases, bills and jail before /mono end.<newline>'
+  - 'Buy unowned property with /mono buy or /mono auction. Bid with /mono bid [amount]; withdraw with /mono auction leave. Auctions end when only the highest bidder remains.'
+2:
+  - '<gold>Properties and jail</gold><newline>'
+  - '/mono map shows the clickable board. /mono summary [player], list [player], pos, view [property] and color [color] [player] show public information.<newline>'
+  - 'Use full property names, unique prefixes or board indices. Build/destroy evenly with /mono build|destroy [property]. The bank has 32 houses and 12 hotels.<newline>'
+  - 'If houses are unavailable, /mono destroyhotel [property] sells the entire hotel for half the price of five buildings, retaining the legacy emergency-sale option.<newline>'
+  - 'Mortgage for half the property price; /mono unmortgage costs the full price, following the legacy game. Sell all buildings in a color group first.<newline>'
+  - 'Jail: /mono roll for doubles, payjail for $50 or jailfree. The third failed roll costs $100 and ends the jail stay without moving. Three consecutive doubles send you to jail.'
+3:
+  - '<gold>Trades, bills and game controls</gold><newline>'
+  - '/mono trade [player] starts a trade; offer/request property|money|jailfree [value] changes it. Both players must confirm; changes revoke both confirmations. Mortgaged or built-up color groups cannot be traded.<newline>'
+  - 'Also supported: /mono trade offer|request ..., trade confirm|unconfirm|cancel|view.<newline>'
+  - 'Bills block turn completion. Sell buildings, mortgage or trade, then /mono paybills. /mono bankrupt returns your assets to the bank and lets you spectate.<newline>'
+  - '/mono menu opens choices. Closing a dialog changes nothing; reopen it or use commands.<newline>'
+  - 'Disconnected players keep their seat. Required actions wait for reconnect or /tt kick [player]. /tt leave exits; the host can /tt return. The last active player wins.'

@@ -3,6 +3,11 @@ package me.neoblade298.ashtabletop;
 import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -35,8 +40,31 @@ public class AshTabletop extends JavaPlugin {
 				return;
 			}
 		}
+		for (String game : new String[] {"Monopoly", "Uno"}) {
+			for (String file : new String[] {"config.yml", "manual.yml"}) {
+				File destination = new File(new File(folder, game), file);
+				if (!destination.exists()) {
+					try (InputStream resource = Objects.requireNonNull(getResource("games/" + game + "/" + file))) {
+						Files.createDirectories(destination.getParentFile().toPath());
+						Files.copy(resource, destination.toPath());
+					}
+					catch (IOException e) {
+						logger.log(Level.SEVERE, "Unable to install game configuration: " + destination, e);
+						getServer().getPluginManager().disablePlugin(this);
+						return;
+					}
+				}
+			}
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new GameManager(), this);
+		}
+		catch (IllegalArgumentException e) {
+			logger.log(Level.SEVERE, "Invalid game configuration. Correct the game files before enabling AshTabletop.", e);
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
 		initCommands();
-		getServer().getPluginManager().registerEvents(new GameManager(), this);
 	}
 
 	@Override
@@ -88,6 +116,8 @@ public class AshTabletop extends JavaPlugin {
 		thecrew.register(new CmdTheCrewRestartGame("restartgame", "Restarts the game", null, SubcommandRunner.PLAYER_ONLY));
 		thecrew.register(new CmdTheCrewUseSonars("usesonars", "Uses a sonars", null, SubcommandRunner.PLAYER_ONLY));
 		thecrew.register(new CmdTheCrewSonar("sonar", "Brings up sonar menu", null, SubcommandRunner.PLAYER_ONLY));
+		Objects.requireNonNull(getCommand("mono")).setExecutor(new ChatGameCommand("monopoly"));
+		Objects.requireNonNull(getCommand("uno")).setExecutor(new ChatGameCommand("uno"));
 	}
 	
 	public static AshTabletop inst() {

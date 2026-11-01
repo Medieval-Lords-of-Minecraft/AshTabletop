@@ -19,6 +19,15 @@ commands:
     description: Commands for The Crew
     usage: /thecrew
     permission: tabletop.use
+  mono:
+    description: Commands for Monopoly
+    aliases: [monopoly]
+    usage: /mono
+    permission: tabletop.use
+  uno:
+    description: Commands for Uno
+    usage: /uno
+    permission: tabletop.use
 permissions:
   tabletop.use:
     default: true
