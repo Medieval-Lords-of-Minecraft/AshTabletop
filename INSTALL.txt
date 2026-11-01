@@ -4,6 +4,7 @@ Requires Java 25 or newer and the Bukkit/Paper edition of NeoCore.
 This is a Paper server plugin, not a Velocity or plain Spigot plugin.
 
 Build with JDK 25: mvn -U clean package
+In VS Code, Ctrl+Shift+B runs this Maven build as the default build task.
 The existing neocore.version property can pin a published NeoCore release.
 Copy target\AshTabletop-0.0.1-SNAPSHOT.jar into the Paper server's plugins
 directory alongside a compatible NeoCore plugin, then restart the server.
