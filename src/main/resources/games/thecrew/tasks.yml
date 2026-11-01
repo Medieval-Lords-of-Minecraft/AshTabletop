@@ -1,0 +1,796 @@
+1: # Win 3 tricks in a row
+  type: WIN_TRICKS_ROW
+  wins: 3
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+2: # Win a green 9 with a sub
+  type: WIN_TRICK_USING
+  win: 9G
+  using: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+3:
+  type: WIN_CARDS_COMPARE
+  amount: 2
+  comparator: "="
+  card: 9*
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+4:
+  type: WIN_CARDS
+  cards:
+  - 3B
+  - 3R
+  - 3Y
+  - 3G
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+5:
+  type: WIN_CARDS
+  cards:
+  - 3S
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+6:
+  type: WIN_TRICK_TOTAL_COMPARE
+  total:
+    3: 8
+    4: 12
+    5: 16
+  comparator: "<"
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+7:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - 1*
+  - 2*
+  - 3*
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+8:
+  type: WIN_CARDS
+  cards:
+  - 1R
+  - 7G
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+9:
+  type: WIN_CARDS_COMPARE
+  amount: 3
+  comparator: "="
+  card: 6*
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+10:
+  type: COMPARE_WINS
+  with: captain
+  comparator: EQUAL
+  difficulty:
+    3: 4
+    4: 3
+    5: 3
+11: # Win first and last trick
+  type: WIN_EDGE_TRICK
+  first: true
+  last: true
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+12:
+  type: WIN_FIRST_TRICKS
+  negate: true
+  amount: 5
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+13:
+  type: COMPARE_COLORS
+  card: "*R"
+  comp: "*G"
+  comparator: ">"
+  allow_zero: true
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+14: # Win a trick with any 2
+  type: WIN_TRICK_USING
+  using: 2*
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+15:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*Y"
+  - "*G"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+16: # Win as many green as yellow, must be >0
+  type: WIN_TRICK_COMPARE_COLORS
+  card: "*G"
+  comp: "*Y"
+  comparator: "="
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+17:
+  type: WIN_CARDS_COMPARE
+  amount: 2
+  comparator: "="
+  card: "*B"
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+18:
+  type: WIN_CARDS_COMPARE
+  amount: 2
+  comparator: "="
+  card: "*G"
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+19:
+  type: WIN_TRICKS
+  amount: 0
+  difficulty:
+    3: 4
+    4: 3
+    5: 3
+20:
+  type: WIN_CARDS_TYPE_EXCLUSIVE
+  win: 1S
+  exclude: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+21:
+  type: WIN_CARDS_TYPE_EXCLUSIVE
+  win: 2S
+  exclude: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+22:
+  type: WIN_TRICKS
+  amount: 1
+  difficulty:
+    3: 3
+    4: 2
+    5: 2
+23:
+  type: NO_OPEN_TRICK
+  cards:
+  - "*R"
+  - "*Y"
+  - "*B"
+  difficulty:
+    3: 4
+    4: 3
+    5: 3
+24:
+  type: WIN_CARDS_TYPE_EXCLUSIVE
+  win: 1S
+  exclude: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+25:
+  type: WIN_TRICK_USING
+  win: 6*
+  using: 6*
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+26:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - 9*
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+27:
+  type: COMPARE_COLORS
+  card: "*R"
+  comp: "*Y"
+  comparator: "="
+  difficulty:
+    3: 4
+    4: 4
+    5: 4
+28:
+  type: COMPARE_WINS
+  with: everyone
+  comparator: LESS
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+29:
+  type: WIN_CARDS_COMPARE
+  card: "*Y"
+  amount: 7
+  comparator: ">="
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+30:
+  type: WIN_CARDS
+  cards:
+  - 9Y
+  - 7B
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+31:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*Y"
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+32:
+  type: WIN_FIRST_TRICKS
+  negate: true
+  amount: 4
+  difficulty:
+    3: 1
+    4: 2
+    5: 3
+33:
+  type: WIN_CARDS_COMPARE
+  card: "*R"
+  amount: 5
+  comparator: ">="
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+34:
+  type: WIN_CARDS_COMPARE
+  card: 5*
+  amount: 3
+  comparator: ">="
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+35:
+  type: WIN_CARDS_COMPARE
+  card: 7*
+  amount: 2
+  comparator: ">="
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+36: # Win ONLY 2 tricks in a row
+  type: WIN_TRICKS_ROW
+  wins: 2
+  exclusive: true
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+37:
+  type: WIN_CARDS_COMPARE
+  amount: 1
+  comparator: "="
+  card: "*R"
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+38:
+  type: WIN_CARDS
+  cards:
+  - 9B
+  - 9R
+  - 9Y
+  - 9G
+  difficulty:
+    3: 4
+    4: 5
+    5: 6
+39:
+  type: WIN_CARDS
+  cards:
+  - 1Y
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+40: # Win all of the cards in at least 1 color
+  type: WIN_ONE_COLOR
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+41:
+  type: WIN_FIRST_TRICKS
+  negate: true
+  amount: 3
+  difficulty:
+    3: 1
+    4: 2
+    5: 2
+42:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - 1*
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+43:
+  type: WIN_TRICK_USING
+  win: 8*
+  using: 4*
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+44: # Win as many green as yellow, must be >0
+  type: WIN_TRICK_COMPARE_COLORS
+  card: "*Y"
+  comp: "*B"
+  comparator: ">"
+  allow_zero: true
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+45:
+  type: COMPARE_WINS
+  with: captain
+  comparator: LESS
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+46:
+  type: WIN_CARDS
+  cards:
+  - 8R
+  - 5B
+  difficulty:
+    3: 2
+    4: 2
+    5: 3
+47:
+  type: WIN_CARDS
+  cards:
+  - 5G
+  - 8B
+  difficulty:
+    3: 2
+    4: 2
+    5: 3
+48: # Win a trick that only contains odd numbers
+  type: WIN_TRICK_EVEN_ODD
+  test: odd
+  difficulty:
+    3: 2
+    4: 4
+    5: 5
+49:
+  type: WIN_CARDS
+  cards:
+  - 9R
+  - 8Y
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+50: # Win a trick with a total value equal to 22 or 23
+  type: WIN_TRICK_TOTAL_EQUAL
+  totals:
+  - 22
+  - 23
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+51:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*G"
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+52:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - 8*
+  - 9*
+  difficulty:
+    3: 3
+    4: 3
+    5: 2
+53:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*R"
+  - "*B"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+54:
+  type: COMPARE_WINS
+  with: everyone
+  comparator: GREATER
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+55: # Win 2G in the final trick of the game
+  type: WIN_CARDS_FINAL
+  card: 2G
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+56:
+  type: WIN_TRICK_EVEN_ODD
+  test: even
+  difficulty:
+    3: 2
+    4: 5
+    5: 6
+57:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - 5*
+  difficulty:
+    3: 1
+    4: 2
+    5: 2
+58:
+  type: COMPARE_WINS
+  with: combined
+  comparator: GREATER
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+59:
+  type: WIN_CARDS
+  cards:
+  - 5R
+  - 6Y
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+60:
+  type: WIN_CARDS
+  cards:
+  - 4B
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+61: # Win at least 1 card of each color
+  type: WIN_EACH_COLOR
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+62:
+  type: WIN_EDGE_TRICK
+  first: true
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+63: # Win a trick where all cards are greater than 5
+  type: WIN_TRICK_EACH_COMPARE
+  value: 5
+  comparator: ">"
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+64:
+  type: WIN_CARDS
+  cards:
+  - 3G
+  - 4Y
+  - 5Y
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+65:
+  type: WIN_TRICKS
+  amount: 4
+  difficulty:
+    3: 2
+    4: 3
+    5: 5
+66:
+  type: WIN_EDGE_TRICK
+  first: true
+  last: true
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+67: # Never win 2 tricks in a row
+  type: WIN_TRICKS_ROW
+  negate: true
+  wins: 2
+  difficulty:
+    3: 3
+    4: 2
+    5: 2
+68:
+  type: WIN_TRICK_USING
+  using: 6*
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+69:
+  type: WIN_EDGE_TRICK
+  last: true
+  exclusive: true
+  difficulty:
+    3: 4
+    4: 4
+    5: 4
+70:
+  type: WIN_CARDS
+  cards:
+  - 6B
+  - 7Y
+  difficulty:
+    3: 2
+    4: 2
+    5: 3
+71: # Win ONLY 3 tricks in a row
+  type: WIN_TRICKS_ROW
+  wins: 3
+  exclusive: true
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+72:
+  type: WIN_CARDS_COMPARE
+  amount: 3
+  comparator: "="
+  card: "*S"
+  difficulty:
+    3: 3
+    4: 4
+    5: 4
+73:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*S"
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+74: # Win as many green as yellow, must be >0
+  type: WIN_TRICK_COMPARE_COLORS
+  card: "*R"
+  comp: "*B"
+  comparator: "="
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+75:
+  type: WIN_CARDS_COMPARE
+  amount: 3
+  comparator: ">="
+  card: 9*
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+76:
+  type: WIN_FIRST_TRICKS
+  amount: 3
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+77:
+  type: WIN_TRICK_USING
+  win: 7R
+  using: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 3
+78: # Win a trick where all cards are greater than 5, cannot use subs
+  type: WIN_TRICK_EACH_COMPARE
+  value: 7
+  comparator: "<"
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+79:
+  type: WIN_FIRST_TRICKS
+  amount: 2
+  difficulty:
+    3: 1
+    4: 1
+    5: 2
+80:
+  type: WIN_TRICK_USING
+  using: 5*
+  difficulty:
+    3: 2
+    4: 3
+    5: 4
+81:
+  type: WIN_TRICK_TOTAL_COMPARE
+  total:
+    3: 23
+    4: 28
+    5: 31
+  comparator: ">"
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+82: # Win 2 tricks in a row
+  type: WIN_TRICKS_ROW
+  wins: 2
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+83:
+  type: WIN_TRICK_USING
+  using: 3*
+  difficulty:
+    3: 3
+    4: 4
+    5: 5
+84:
+  type: WIN_TRICKS
+  amount: 2
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+85:
+  type: WIN_CARDS_COMPARE
+  amount: 2
+  comparator: "="
+  card: "*S"
+  difficulty:
+    3: 3
+    4: 3
+    5: 4
+86: # Win exactly 1 red and 1 green 
+  type: WIN_CARDS_COMPARE_MULTIPLE
+  amount: 1
+  cards: 
+  - "*R"
+  - "*G"
+  difficulty:
+    3: 4
+    4: 4
+    5: 4
+87:
+  type: WIN_CARDS
+  cards:
+  - 6G
+  difficulty:
+    3: 1
+    4: 1
+    5: 1
+88:
+  type: WIN_EDGE_TRICK
+  first: true
+  exclusive: true
+  difficulty:
+    3: 4
+    4: 3
+    5: 3
+89:
+  type: COMPARE_WINS
+  with: captain
+  comparator: GREATER
+  difficulty:
+    3: 2
+    4: 2
+    5: 3
+90:
+  type: NO_OPEN_TRICK
+  cards:
+  - "*R"
+  - "*G"
+  difficulty:
+    3: 2
+    4: 1
+    5: 1
+91:
+  type: WIN_TRICK_USING
+  win: 5*
+  using: 7*
+  difficulty:
+    3: 1
+    4: 2
+    5: 2
+92:
+  type: WIN_CARDS
+  negate: true
+  cards:
+  - "*R"
+  difficulty:
+    3: 2
+    4: 2
+    5: 2
+93:
+  type: WIN_CARDS
+  cards:
+  - 1B
+  - 2B
+  - 3B
+  difficulty:
+    3: 2
+    4: 3
+    5: 3
+94:
+  type: WIN_CARDS
+  cards:
+  - 3R
+  difficulty:
+    3: 1
+    4: 1
+    5: 1

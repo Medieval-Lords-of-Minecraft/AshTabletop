@@ -1,0 +1,5 @@
+key: "thecrew"
+name: "The Crew"
+description: "A cooperative trick-taking game."
+min-players: 3
+max-players: 5

@@ -1,0 +1,104 @@
+pages:
+  0:
+    1:
+      text: "&6&l>&8&m---------------&c&l» &eThe Crew «&8&m---------------&6&l<\n"
+    2: 
+      text: "&eThe Crew &7is a cooperative trick-taking card game. The goal of the game is to complete all the tasks you're given before everyone runs out of cards.\n\n"
+    3: 
+      text: "&7The game begins by passing out 40 cards equally divided between all players. The deck consists of &cRed&7, &9Blue&7, &2Green&7, and &eYellow&7 cards numbered 1-9 and 4 &8&lSubmarine&7 cards numbered 1-4. The player who gets the &8&l4 Submarine &7is the &fCaptain&7. We'll get back to what these mean later.\n\n"
+    4:
+      text: "&7In a trick-taking game, you have multiple rounds. Each player in turn order puts down 1 card per round. The player with the highest value card &fwins&7 all of the cards put down that round. Then you do this again until everyone has no cards left.\n\n"
+    5:
+      text: "&7You may NOT communicate during the entire game except with &fSonar Tokens&7! Not knowing what other people are trying to do is part of the difficulty!\n"
+    footer1: 
+      text: "&6&l>&8&m--------------- "
+    prev:
+      text: "&c&l« &fPrevious"
+      hover: "&cYou're already on the first page!"
+    mid:
+      text: " | "
+    next:
+      text: "&fNext &c&l»"
+      hover: "&eClick for page 2/5!"
+      run: "/tt manual thecrew 2"
+    footer2:
+      text: " &8&m---------------&6&l<"
+  1:
+    1:
+      text: "&6&l>&8&m--------------&c&l» &e1. Task Rolling «&8&m--------------&6&l<\n"
+    2: 
+      text: "&eTask Rolling &7is the first stage. Depending on the &fdifficulty &7parameter you set, the game will randomly choose some tasks. At higher difficulties, some tasks may conflict with each other and make them impossible. The &fCaptain &7can then choose to reroll the tasks or keep them.\n"
+    footer1: 
+      text: "&6&l>&8&m--------------- "
+    prev:
+      text: "&c&l« &fPrevious"
+      hover: "&eClick for page 1/5!"
+      run: "/tt manual thecrew 1"
+    mid:
+      text: " | "
+    next:
+      text: "&fNext &c&l»"
+      hover: "&eClick for page 3/5!"
+      run: "/tt manual thecrew 3"
+    footer2:
+      text: " &8&m---------------&6&l<"
+  2:
+    1:
+      text: "&6&l>&8&m--------------&c&l» &e2. Task Assignment «&8&m--------------&6&l<\n"
+    2: 
+      text: "&7Starting with The &fCaptain&7, each player chooses 1 task to complete until all tasks are taken. Some tasks may be impossible for certain players, so you should try picking the hardest tasks you can handle so that others don't get them!\n"
+    footer1: 
+      text: "&6&l>&8&m--------------- "
+    prev:
+      text: "&c&l« &fPrevious"
+      hover: "&eClick for page 2/5!"
+      run: "/tt manual thecrew 2"
+    mid:
+      text: " | "
+    next:
+      text: "&fNext &c&l»"
+      hover: "&eClick for page 4/5!"
+      run: "/tt manual thecrew 4"
+    footer2:
+      text: " &8&m---------------&6&l<"
+  3:
+    1:
+      text: "&6&l>&8&m--------------&c&l» &e3. Trick-taking «&8&m--------------&6&l<\n"
+    2: 
+      text: "&7In &eThe Crew&7, the first player to put down a card sets the rule for the round. If you have a card that is the same &fcolor &7as the first card, you may &fonly put down that color. If you don't have the same color, you may put down any card.\n\n"
+    3:
+      text: "&7After all players put down a card, the winner is the highest numbered card that is the same color as the first card. The only exception is &8&lSubmarine Cards&7, which are wildcards and win even if the first card is a different color. The trick is that &8&lSubmarine Cards &7can only be played if you don't have the same color as the first card, per the rule above.\n\n"
+    4:
+      text: "&7On the first round, The &fCaptain &7plays the first card. In all subsequent rounds, the winner of the previous round plays the first card.\n"
+    footer1: 
+      text: "&6&l>&8&m--------------- "
+    prev:
+      text: "&c&l« &fPrevious"
+      hover: "&eClick for page 3/5!"
+      run: "/tt manual thecrew 3"
+    mid:
+      text: " | "
+    next:
+      text: "&fNext &c&l»"
+      hover: "&eClick for page 5/5!"
+      run: "/tt manual thecrew 5"
+    footer2:
+      text: " &8&m---------------&6&l<"
+  4:
+    1:
+      text: "&6&l>&8&m--------------&c&l» &e3a. Sonar Tokens «&8&m--------------&6&l<\n"
+    2: 
+      text: "&7You may use &fSonar Tokens &7to communicate to your team about a card. You may communicate if a card is the highest, lowest, or only card of any color in your hand. If a card is none of those, you may not use a sonar token on that card.\n"
+    footer1: 
+      text: "&6&l>&8&m--------------- "
+    prev:
+      text: "&c&l« &fPrevious"
+      hover: "&eClick for page 4/5!"
+      run: "/tt manual thecrew 4"
+    mid:
+      text: " | "
+    next:
+      text: "&fNext &c&l»"
+      hover: "&cYou're already on the last page!"
+    footer2:
+      text: " &8&m---------------&6&l<"

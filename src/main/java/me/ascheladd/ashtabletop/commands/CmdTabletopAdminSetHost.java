@@ -1,0 +1,54 @@
+package me.ascheladd.ashtabletop.commands;
+
+import me.ascheladd.ashtabletop.AshTabletop;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.ascheladd.ashtabletop.GameManager;
+import me.ascheladd.ashtabletop.GamePlayer;
+import me.ascheladd.ashtabletop.GameSession;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
+public class CmdTabletopAdminSetHost extends Subcommand {
+
+	// /tta sethost [player]
+	public CmdTabletopAdminSetHost(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("player"));
+	}
+
+	@Override
+	public void run(CommandSender s, String[] args) {
+		Optional<Player> p = AshTabletop.findPlayer(args[0]);
+		
+		if (p.isEmpty()) {
+			Util.msg(s, Component.text("That player isn't online!", NamedTextColor.RED));
+			return;
+		}
+		
+		// Check if the name exists already, or player is already in a game
+		UUID uuid = p.get().getUniqueId();
+		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
+		if (sess == null) {
+			Util.msg(s, Component.text("That player isn't in the game session!", NamedTextColor.RED));
+			return;
+		}
+		
+		if (sess.getHost().equals(uuid)) {
+			Util.msg(s, Component.text("That player is already the host!", NamedTextColor.RED));
+		}
+
+		sess.setHost(s, p.get().getName());
+	}
+
+}

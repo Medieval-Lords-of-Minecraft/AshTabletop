@@ -1,9 +1,10 @@
-AshTabletop - Paper 26.3
+AshTabletop - Paper 26.2
 
 Requires Java 25 or newer and the Bukkit/Paper edition of NeoCore.
 This is a Paper server plugin, not a Velocity or plain Spigot plugin.
 
 Build with JDK 25: mvn -U clean package
+Java sources use src\main\java and the package me.ascheladd.ashtabletop.
 In VS Code, Ctrl+Shift+B runs this Maven build as the default build task.
 The package phase also copies the JAR to C:\Users\Alex\deploy\AshTabletop.jar,
 overwriting the previous deployed copy. The versioned JAR remains in target.
@@ -12,12 +13,20 @@ The existing neocore.version property can pin a published NeoCore release.
 Copy target\AshTabletop-0.0.1-SNAPSHOT.jar into the Paper server's plugins
 directory alongside a compatible NeoCore plugin, then restart the server.
 
-Preserve your existing game configuration. Copy the old AshTabletop data
-directory to plugins\AshTabletop on the Paper server, including:
+The Crew's bundled defaults are automatically installed on startup into
+plugins\AshTabletop\The Crew when individual files are missing:
   The Crew\config.yml
   The Crew\manual.yml
   The Crew\tasks.yml
-These game definitions are external files and are not bundled in this repo.
+Missing files are generated silently; existing files are never overwritten.
+To preserve customized game definitions, copy your old AshTabletop data
+directory to plugins\AshTabletop before starting the server.
+Bundled resources use Maven's standard src\main\resources directory.
+The Crew defaults are in src\main\resources\games\thecrew; Monopoly and Uno
+defaults are alongside them in games\monopoly and games\uno.
+Updates do not replace existing server files. To apply corrected bundled task
+definitions, back up plugins\AshTabletop\The Crew\tasks.yml and replace it with
+the repository's src\main\resources\games\thecrew\tasks.yml.
 
 Commands: /tt, /tta, /thecrew, /mono (alias /monopoly), /uno.
 tabletop.use is enabled for everyone; tabletop.admin defaults to operators.
@@ -35,7 +44,8 @@ config.yml and manual.yml files are installed into plugins\AshTabletop\Monopoly
 and plugins\AshTabletop\Uno on first enable. Existing files are never replaced.
 Monopoly's board and Chance/Community Chest cards can be edited in its config.
 Configuration errors are logged and prevent the plugin from enabling.
-The Crew still requires its existing external configuration as described above.
+The Crew's config.yml, manual.yml and tasks.yml are also bundled as described
+above. Its older nested manual format and the newer page format are supported.
 
 Create a lobby: /tt create monopoly <name> or /tt create uno <name>.
 Use /tt invite <player>, /tt join <name>, then /tt start.

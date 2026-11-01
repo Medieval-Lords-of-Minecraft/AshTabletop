@@ -1,0 +1,36 @@
+package me.ascheladd.ashtabletop.commands;
+
+import java.util.UUID;
+
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.ascheladd.ashtabletop.GameManager;
+import me.ascheladd.ashtabletop.GamePlayer;
+import me.ascheladd.ashtabletop.GameSession;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class CmdTabletopLeave extends Subcommand {
+
+	// /tt leave
+	public CmdTabletopLeave(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+	}
+
+	@Override
+	public void run(CommandSender s, String[] args) {
+		Player p = (Player) s;
+		UUID uuid = p.getUniqueId();
+		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
+		if (sess == null) {
+			Util.msg(s, Component.text("You're not in a game session!", NamedTextColor.RED));
+			return;
+		}
+
+		sess.leavePlayer(p);
+	}
+
+}

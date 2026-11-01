@@ -11,15 +11,6 @@
     <neocore.version>RELEASE</neocore.version>
   </properties>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -75,7 +66,7 @@
     <dependency>
         <groupId>io.papermc.paper</groupId>
         <artifactId>paper-api</artifactId>
-        <version>26.3.build.219-stable</version>
+        <version>26.2.build.111-stable</version>
         <scope>provided</scope>
     </dependency>
     <dependency>
