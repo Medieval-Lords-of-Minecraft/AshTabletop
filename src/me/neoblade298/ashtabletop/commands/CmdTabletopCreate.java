@@ -3,11 +3,11 @@ package me.neoblade298.ashtabletop.commands;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
@@ -32,7 +32,7 @@ public class CmdTabletopCreate extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		String game = args[0].toLowerCase();
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();

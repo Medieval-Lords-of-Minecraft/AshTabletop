@@ -2,34 +2,34 @@ package me.neoblade298.ashtabletop.thecrew.commands;
 
 import java.util.UUID;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.GameInstance;
 import me.neoblade298.ashtabletop.GameManager;
 import me.neoblade298.ashtabletop.GamePlayer;
 import me.neoblade298.ashtabletop.GameSession;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.entity.Player;
 
 public class CmdTheCrewMod extends Subcommand {
 	private static final Component mod;
 	
 	static {
-		Component redo = BungeeCore.miniMessage().deserialize("<dark_gray>[<red>Click to redo round</red>]");
+		Component redo = NeoCore.miniMessage().deserialize("<dark_gray>[<red>Click to redo round</red>]");
 		redo = redo.clickEvent(ClickEvent.runCommand("/thecrew restartround"));
 		redo = redo.hoverEvent(Component.text("Click here!"));
 		
-		Component restart = BungeeCore.miniMessage().deserialize("<dark_gray>[<red>Click to restart from round 1</red>]");
+		Component restart = NeoCore.miniMessage().deserialize("<dark_gray>[<red>Click to restart from round 1</red>]");
 		redo = redo.clickEvent(ClickEvent.runCommand("/thecrew restartgame"));
 		redo = redo.hoverEvent(Component.text("Click here!"));
 		
-		Component lobby = BungeeCore.miniMessage().deserialize("<dark_gray>[<red>Click to return to lobby</red>]");
+		Component lobby = NeoCore.miniMessage().deserialize("<dark_gray>[<red>Click to return to lobby</red>]");
 		redo = redo.clickEvent(ClickEvent.runCommand("/tt return"));
 		redo = redo.hoverEvent(Component.text("Click here!"));
 		mod = redo.append(restart.append(lobby));
@@ -42,7 +42,7 @@ public class CmdTheCrewMod extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();
 		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);

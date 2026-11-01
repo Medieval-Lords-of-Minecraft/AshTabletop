@@ -1,52 +1,52 @@
 package me.neoblade298.ashtabletop;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
-import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.scheduler.Scheduler;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.commands.SubcommandManager;
+import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.commands.*;
 import me.neoblade298.ashtabletop.thecrew.commands.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-@Plugin(id = "ashtabletop", name = "AshTabletop", version = "0.1.0-SNAPSHOT",
-        url = "https://ml-mc.com", description = "Ash's tabletop games plugin", authors = {"Ascheladd"})
-public class AshTabletop {
+public class AshTabletop extends JavaPlugin {
 	private static AshTabletop inst;
 	private static Logger logger;
 	private static File folder;
-	private static ProxyServer proxy;
-	
-	@Inject
-	public AshTabletop(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
-        inst = this;
-        proxy = server;
-        AshTabletop.logger = logger;
-		folder = dataDirectory.toFile();
+
+	@Override
+    public void onEnable() {
+		inst = this;
+		logger = getLogger();
+		folder = getDataFolder();
+		for (String file : new String[] {"config.yml", "manual.yml", "tasks.yml"}) {
+			File config = new File(new File(folder, "The Crew"), file);
+			if (!config.isFile()) {
+				logger.severe("Missing game configuration: " + config
+						+ ". Restore the existing AshTabletop data directory before enabling the plugin.");
+				getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
+		}
+		initCommands();
+		getServer().getPluginManager().registerEvents(new GameManager(), this);
 	}
 
-	@Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent e) {
-		inst = this;
-		initCommands();
-    	
-		proxy.getEventManager().register(this, new GameManager());
+	@Override
+	public void onDisable() {
+		getServer().getScheduler().cancelTasks(this);
+		GameManager.clear();
 	}
 	
 	private void initCommands() {
-		CommandManager mngr = BungeeCore.proxy().getCommandManager();
-		SubcommandManager tt = new SubcommandManager("tt", "tabletop.use", NamedTextColor.RED, mngr, this);
+		SubcommandManager tt = new SubcommandManager("tt", "tabletop.use", NamedTextColor.RED, this);
 		tt.registerCommandList("");
 		tt.register(new CmdTabletopCreate("create", "Creates a lobby for a game", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopInvite("invite", "Invites players to your lobby", null, SubcommandRunner.PLAYER_ONLY));
@@ -57,7 +57,7 @@ public class AshTabletop {
 		tt.register(new CmdTabletopInstances("instances", "View a list of all active games", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopJoin("join", "Join a lobby", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopKick("kick", "Kick a player from your session", null, SubcommandRunner.PLAYER_ONLY));
-		tt.register(new CmdTabletopKick("kicklist", "View moderation list", null, SubcommandRunner.PLAYER_ONLY));
+		tt.register(new CmdTabletopKicklist("kicklist", "View moderation list", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopPublic("public", "Set your lobby to public", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopPrivate("private", "Set your lobby to private", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopStart("start", "Starts the game", null, SubcommandRunner.PLAYER_ONLY));
@@ -68,14 +68,14 @@ public class AshTabletop {
 		tt.register(new CmdTabletopManual("manual", "View a game's manual", null, SubcommandRunner.PLAYER_ONLY));
 		tt.register(new CmdTabletopReturn("return", "Return from a game to a lobby", null, SubcommandRunner.PLAYER_ONLY));
 		
-		SubcommandManager tta = new SubcommandManager("tta", "tabletop.admin", NamedTextColor.DARK_RED, mngr, this);
+		SubcommandManager tta = new SubcommandManager("tta", "tabletop.admin", NamedTextColor.DARK_RED, this);
 		tta.registerCommandList("");
 		tta.register(new CmdTabletopAdminKick("kick", "Force kicks a player from a session", null, SubcommandRunner.BOTH));
 		tta.register(new CmdTabletopAdminSetHost("sethost", "Force sets a host for a session", null, SubcommandRunner.BOTH));
 		tta.register(new CmdTabletopAdminDisband("end", "Force sets a host for a session", null, SubcommandRunner.BOTH));
 		tta.register(new CmdTabletopAdminDebug("debug", "Show debug for an instance", null, SubcommandRunner.PLAYER_ONLY));
 
-		SubcommandManager thecrew = new SubcommandManager("thecrew", "tabletop.use", NamedTextColor.RED, mngr, this);
+		SubcommandManager thecrew = new SubcommandManager("thecrew", "tabletop.use", NamedTextColor.RED, this);
 		thecrew.register(new CmdTheCrewPlay("play", "Plays a card in your hand", null, SubcommandRunner.PLAYER_ONLY));
 		thecrew.register(new CmdTheCrewAcceptTasks("accepttasks", "Accepts rolled tasks", null, SubcommandRunner.PLAYER_ONLY));
 		thecrew.register(new CmdTheCrewAcceptTask("accepttask", "Accepts a task", null, SubcommandRunner.PLAYER_ONLY));
@@ -94,12 +94,16 @@ public class AshTabletop {
 		return inst;
 	}
 	
-	public static Scheduler scheduler() {
-		return proxy.getScheduler();
+	public static BukkitScheduler scheduler() {
+		return Bukkit.getScheduler();
 	}
 	
-	public static ProxyServer proxy() {
-		return proxy;
+	public static Optional<Player> findPlayer(String name) {
+		return Optional.ofNullable(Bukkit.getPlayerExact(name));
+	}
+
+	public static Optional<Player> findPlayer(UUID uuid) {
+		return Optional.ofNullable(Bukkit.getPlayer(uuid));
 	}
 	
 	public static Logger logger() {

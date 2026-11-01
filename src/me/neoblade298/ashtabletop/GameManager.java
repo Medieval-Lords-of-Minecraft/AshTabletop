@@ -3,15 +3,16 @@ package me.neoblade298.ashtabletop;
 import java.util.HashMap;
 import java.util.UUID;
 
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.ashtabletop.thecrew.TheCrew;
 
-public class GameManager {
+public class GameManager implements Listener {
 	private static HashMap<String, GameLobby<? extends GamePlayer>> lobbies = new HashMap<String, GameLobby<? extends GamePlayer>>();
 	private static HashMap<String, GameInstance<? extends GamePlayer>> instances = new HashMap<String, GameInstance<? extends GamePlayer>>();
 	private static HashMap<UUID, GameSession<? extends GamePlayer>> inSession = new HashMap<UUID, GameSession<? extends GamePlayer>>(); // Can be lobby or instance
@@ -23,8 +24,8 @@ public class GameManager {
 	}
 	
 	// Kick player out of lobbies on disconnect, disband lobby if host is kicked
-    @Subscribe
-    public void onLeave(DisconnectEvent e) {
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
     	Player p = e.getPlayer();
     	UUID uuid = p.getUniqueId();
     	if (inSession.containsKey(uuid)) {
@@ -35,6 +36,7 @@ public class GameManager {
     			if (lob.getHost().equals(uuid)) {
     				disbandLobby(lob);
     			}
+
     			else {
     				lob.leavePlayer(p);
     			}
@@ -42,6 +44,13 @@ public class GameManager {
     	}
     }
     
+	public static void clear() {
+		inSession.clear();
+		lobbies.clear();
+		instances.clear();
+		games.clear();
+	}
+
     public static GameSession<? extends GamePlayer> getSession(String name) {
     	if (lobbies.containsKey(name)) return lobbies.get(name);
     	return instances.get(name);
@@ -65,7 +74,7 @@ public class GameManager {
 		GameLobby<? extends GamePlayer> lobby = game.createLobby(name, uuid, isPublic);
 		lobbies.put(name.toLowerCase(), lobby);
 		inSession.put(sender.getUniqueId(), lobby);
-		Util.msg(sender, BungeeCore.miniMessage().deserialize("Successfully created lobby <yellow>" + lobby.getName() + "</yellow>!"));
+		Util.msg(sender, NeoCore.miniMessage().deserialize("Successfully created lobby <yellow>" + lobby.getName() + "</yellow>!"));
 		lobby.displayInfo(sender, sender);
 	}
 	

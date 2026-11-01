@@ -1,0 +1,26 @@
+AshTabletop - Paper 26.3
+
+Requires Java 25 or newer and the Bukkit/Paper edition of NeoCore.
+This is a Paper server plugin, not a Velocity or plain Spigot plugin.
+
+Build with JDK 25: mvn -U clean package
+The existing neocore.version property can pin a published NeoCore release.
+Copy target\AshTabletop-0.0.1-SNAPSHOT.jar into the Paper server's plugins
+directory alongside a compatible NeoCore plugin, then restart the server.
+
+Preserve your existing game configuration. Copy the old AshTabletop data
+directory to plugins\AshTabletop on the Paper server, including:
+  The Crew\config.yml
+  The Crew\manual.yml
+  The Crew\tasks.yml
+These game definitions are external files and are not bundled in this repo.
+
+Commands: /tt, /tta, /thecrew.
+tabletop.use is enabled for everyone; tabletop.admin defaults to operators.
+Games and player lookup now cover only players on this Paper server, not
+players across a proxy network. Sessions are in memory and end on shutdown.
+
+The Crew's trick-prediction task uses a native Paper dialog with a whole-number
+slider from 0 to the game's total tricks. Accept stores the prediction; Cancel
+or Escape leaves the task unassigned so it can be selected again. Chat is not
+intercepted for input. Clients must support Minecraft dialogs (1.21.6+).

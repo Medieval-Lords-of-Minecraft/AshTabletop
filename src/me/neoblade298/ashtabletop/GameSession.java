@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -44,22 +44,22 @@ public abstract class GameSession<T extends GamePlayer> {
 	public boolean isPublic() {
 		return isPublic;
 	}
-	public void setHost(CommandSource cmdUser, String username) {
+	public void setHost(CommandSender cmdUser, String username) {
 		Player cmdr = (Player) cmdUser;
-		Optional<Player> p = BungeeCore.proxy().getPlayer(username);
+		Optional<Player> p = AshTabletop.findPlayer(username);
 		if (p.isEmpty()) {
 			Util.msgRaw(cmdUser, Component.text("That player isn't online!", NamedTextColor.RED));
 			return;
 		}
 		
 		host = p.get().getUniqueId();
-		broadcast("<yellow>" + cmdr.getUsername() + " <gray>set the game's host to </gray>" + p.get().getUsername());
+		broadcast("<yellow>" + cmdr.getName() + " <gray>set the game's host to </gray>" + p.get().getName());
 	}
 	public HashMap<String, GameParameter> getParameters() {
 		return params;
 	}
 	public abstract void leavePlayer(Player p);
 	public abstract void kickPlayer(Player s, String username);
-	public abstract void adminKickPlayer(CommandSource s, String username);
+	public abstract void adminKickPlayer(CommandSender s, String username);
 	public abstract void displayInfo(Player viewer, Player viewed);
 }

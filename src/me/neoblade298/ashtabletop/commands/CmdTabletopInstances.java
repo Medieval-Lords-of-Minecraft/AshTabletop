@@ -2,8 +2,8 @@ package me.neoblade298.ashtabletop.commands;
 
 import java.util.Map.Entry;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import me.neoblade298.ashtabletop.GameInstance;
@@ -14,7 +14,7 @@ import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 public class CmdTabletopInstances extends Subcommand {
 
@@ -24,7 +24,7 @@ public class CmdTabletopInstances extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		if (GameManager.getInstances().size() == 0) {
 			Util.msg(s, Component.text("There are currently no active instances!", NamedTextColor.RED));
 			return;

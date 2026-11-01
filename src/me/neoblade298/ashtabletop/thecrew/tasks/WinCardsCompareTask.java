@@ -2,13 +2,13 @@ package me.neoblade298.ashtabletop.thecrew.tasks;
 
 import java.util.ArrayList;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.shared.io.Section;
 
 public class WinCardsCompareTask extends TheCrewTask {
@@ -19,7 +19,7 @@ public class WinCardsCompareTask extends TheCrewTask {
 	protected int amount;
 	
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "card: " + card + ", atLeast: " + atLeast + ", amount: " + amount + ", numWon: " + numWon + ", numRemaining: " + numRemaining);
 	}
 	
@@ -29,7 +29,7 @@ public class WinCardsCompareTask extends TheCrewTask {
 		amount = cfg.getInt("amount");
 		atLeast = cfg.getString("comparator").equals(">=");
 		String str = "Win " + (atLeast ? "at least " : "exactly ") + "<yellow>" + amount + " </yellow>";
-		display = BungeeCore.miniMessage().deserialize(str).append(card.getDisplay());
+		display = NeoCore.miniMessage().deserialize(str).append(card.getDisplay());
 	}
 	
 	public WinCardsCompareTask(TheCrewPlayer owner, WinCardsCompareTask src, TheCrewInstance inst) {

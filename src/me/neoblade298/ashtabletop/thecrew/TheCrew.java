@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
+import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.ashtabletop.Game;
 import me.neoblade298.ashtabletop.GameLobby;
@@ -18,13 +18,15 @@ import me.neoblade298.ashtabletop.thecrew.tasks.*;
 
 public class TheCrew extends Game {
 	private static TheCrew inst;
-	private static File BASE_DIR = new File(AshTabletop.folder(), "/The Crew");
+	private static File BASE_DIR = new File(AshTabletop.folder(), "The Crew");
 	private static ArrayList<TheCrewCard> deck = new ArrayList<TheCrewCard>(44);
 	public static LinkedList<TheCrewTask> tasks = new LinkedList<TheCrewTask>();
 	
 	public TheCrew() {
 		super(BASE_DIR);
 		inst = this;
+		deck.clear();
+		tasks.clear();
 		
 		// Set up deck of cards
 		for (int i = 1; i <= 9; i++) {
@@ -36,7 +38,7 @@ public class TheCrew extends Game {
 		}
 		
 		// Set up tasks
-		BungeeCore.loadFiles(new File(BASE_DIR, "tasks.yml"), (cfg, file) -> {
+		NeoCore.loadFiles(new File(BASE_DIR, "tasks.yml"), (cfg, file) -> {
 			for (String key : cfg.getKeys()) {
 				try {
 					Section sec = cfg.getSection(key);

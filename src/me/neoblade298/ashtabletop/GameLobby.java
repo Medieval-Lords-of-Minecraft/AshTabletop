@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
@@ -30,7 +30,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 
 	public void startGame(Player s) {
 		if (game.getMinPlayers() > players.size()) {
-			Util.msgRaw(s, BungeeCore.miniMessage().deserialize("<red>You need at least <yellow>" + game.getMinPlayers() + "</yellow> players to start!"));
+			Util.msgRaw(s, NeoCore.miniMessage().deserialize("<red>You need at least <yellow>" + game.getMinPlayers() + "</yellow> players to start!"));
 			return;
 		}
 		GameManager.startGame(this, onStart());
@@ -44,16 +44,16 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 			return;
 		}
 
-		Optional<Player> recipient = BungeeCore.proxy().getPlayer(username);
+		Optional<Player> recipient = AshTabletop.findPlayer(username);
 		if (recipient.isEmpty()) {
 			Util.displayError(inviter, "That player isn't online!");
 			return;
 		}
 
 		invited.add(recipient.get().getUniqueId());
-		broadcast("<yellow>" + recipient.get().getUsername() + " <gray>was invited to the lobby!");
+		broadcast("<yellow>" + recipient.get().getName() + " <gray>was invited to the lobby!");
 
-		Util.msg(recipient.get(), BungeeCore.miniMessage()
+		Util.msg(recipient.get(), NeoCore.miniMessage()
 				.deserialize("<gray>You've been invited to lobby <yellow>" + name + " </yellow>for <yellow>" + game.getName() + "</yellow>!"));
 		
 		
@@ -82,7 +82,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 		GameManager.addToLobby(p, this);
 		players.add(p.getUniqueId());
 		displayInfo(p, p);
-		broadcast("<yellow>" + p.getUsername() + " <gray>joined the lobby!");
+		broadcast("<yellow>" + p.getName() + " <gray>joined the lobby!");
 	}
 	
 	public void addPlayerForce(Player p) {
@@ -91,11 +91,11 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 	}
 
 	@Override
-	public void adminKickPlayer(CommandSource s, String name) {
-		Player p = BungeeCore.proxy().getPlayer(name).get();
+	public void adminKickPlayer(CommandSender s, String name) {
+		Player p = AshTabletop.findPlayer(name).get();
 		players.remove(p.getUniqueId());
 		GameManager.removeFromSession(p.getUniqueId());
-		broadcast("<yellow>" + p.getUsername() + " <gray>was kicked from the lobby by an admin!");
+		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the lobby by an admin!");
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 		}
 		// Lobby kicks are guaranteed to be online, since people who disconnect are
 		// auto-kicked from lobbies
-		Optional<Player> opt = BungeeCore.proxy().getPlayer(name);
+		Optional<Player> opt = AshTabletop.findPlayer(name);
 
 		if (opt.isEmpty() || !players.contains(opt.get().getUniqueId())) {
 			Util.displayError(s, "That player isn't in your lobby!");
@@ -116,7 +116,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 
 		players.remove(p.getUniqueId());
 		GameManager.removeFromSession(p.getUniqueId());
-		broadcast("<yellow>" + p.getUsername() + " <gray>was kicked from the lobby!");
+		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the lobby!");
 	}
 
 	@Override
@@ -127,26 +127,26 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 		else {
 			players.remove(s.getUniqueId());
 			GameManager.removeFromSession(s.getUniqueId());
-			broadcast("<yellow>" + s.getUsername() + " <gray>left the lobby!");
+			broadcast("<yellow>" + s.getName() + " <gray>left the lobby!");
 		}
 	}
 
 	public void broadcast(String msg) {
 		for (UUID uuid : players) {
-			Optional<Player> p = BungeeCore.proxy().getPlayer(uuid);
+			Optional<Player> p = AshTabletop.findPlayer(uuid);
 			if (p.isPresent()) {
-				Util.msgRaw(p.get(), BungeeCore.miniMessage().deserialize(msg));
+				Util.msgRaw(p.get(), NeoCore.miniMessage().deserialize(msg));
 			}
 		}
 	}
 
 	@Override
 	public void displayInfo(Player viewer, Player viewed) {
-		Util.msgRaw(viewer, BungeeCore.miniMessage()
+		Util.msgRaw(viewer, NeoCore.miniMessage()
 				.deserialize("<gray><< <red>" + name + " </red>(<gold>" + game.getName() + "</gold>) >>"));
-		Optional<Player> h = BungeeCore.proxy().getPlayer(host);
+		Optional<Player> h = AshTabletop.findPlayer(host);
 		boolean isHost = h.isPresent() && viewer.getUniqueId().equals(host);
-		Component c = BungeeCore.miniMessage()
+		Component c = NeoCore.miniMessage()
 				.deserialize("<dark_gray>[" + (isPublic ? "<green>" : "<gray>") + "Public <reset><dark_gray>| " + 
 						(!isPublic ? "<green>" : "<gray>") + "Private<dark_gray>]");
 		if (isHost) {
@@ -175,7 +175,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 		
 		// Player list
 		Util.msgRaw(viewer, Component.text("Players:", NamedTextColor.GRAY));
-		Util.msgRaw(viewer, SharedUtil.color("<gray>- <red>" + h.get().getUsername() + " </red>(<yellow>Host</yellow>)"));
+		Util.msgRaw(viewer, SharedUtil.color("<gray>- <red>" + h.get().getName() + " </red>(<yellow>Host</yellow>)"));
 		b = Component.text();
 		Component kick = SharedUtil.color("<dark_gray> [<red>Click to kick!</red>]");
 		Component giveHost = SharedUtil.color("<dark_gray> [<red>Click to kick!</red>]");
@@ -187,14 +187,14 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 					b.appendNewline();
 				}
 				first = false;
-				Optional<Player> opt = BungeeCore.proxy().getPlayer(uuid);
+				Optional<Player> opt = AshTabletop.findPlayer(uuid);
 				b.append(Component.text("- ", NamedTextColor.GRAY));
 				if (viewer.getUniqueId().equals(host)) {
-					kick = kick.hoverEvent(HoverEvent.showText(Component.text("Click to kick " + opt.get().getUsername())));
-					kick = kick.clickEvent(ClickEvent.suggestCommand("/tt kick " + opt.get().getUsername()));
+					kick = kick.hoverEvent(HoverEvent.showText(Component.text("Click to kick " + opt.get().getName())));
+					kick = kick.clickEvent(ClickEvent.suggestCommand("/tt kick " + opt.get().getName()));
 					
-					giveHost = giveHost.hoverEvent(HoverEvent.showText(Component.text("Click to give host to " + opt.get().getUsername())));
-					giveHost = giveHost.clickEvent(ClickEvent.suggestCommand("/tt sethost " + opt.get().getUsername()));
+					giveHost = giveHost.hoverEvent(HoverEvent.showText(Component.text("Click to give host to " + opt.get().getName())));
+					giveHost = giveHost.clickEvent(ClickEvent.suggestCommand("/tt sethost " + opt.get().getName()));
 				}
 			}
 			viewer.sendMessage(c.append(kick).append(giveHost));

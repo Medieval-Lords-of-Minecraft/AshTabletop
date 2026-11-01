@@ -7,7 +7,7 @@ import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -61,7 +61,7 @@ public abstract class TheCrewTask {
 	}
 
 	public abstract void reset();
-	public abstract void showDebug(CommandSource s);
+	public abstract void showDebug(CommandSender s);
 	public abstract TheCrewTask clone(TheCrewPlayer owner, TheCrewInstance inst);
 	public abstract boolean hasFailed(TheCrewInstance inst, TheCrewPlayer winner, ArrayList<TheCrewCardInstance> pile);
 	public abstract boolean update(TheCrewInstance inst, TheCrewPlayer winner, ArrayList<TheCrewCardInstance> pile);

@@ -1,14 +1,16 @@
 package me.neoblade298.ashtabletop.commands;
 
+import me.neoblade298.ashtabletop.AshTabletop;
+
 import java.util.Optional;
 import java.util.UUID;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.GameManager;
@@ -26,8 +28,8 @@ public class CmdTabletopAdminKick extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
-		Optional<Player> opt = BungeeCore.proxy().getPlayer(args[0]);
+	public void run(CommandSender s, String[] args) {
+		Optional<Player> opt = AshTabletop.findPlayer(args[0]);
 		
 		if (opt.isEmpty()) {
 			Util.msg(s, Component.text("That player isn't online!", NamedTextColor.RED));
@@ -42,7 +44,7 @@ public class CmdTabletopAdminKick extends Subcommand {
 			return;
 		}
 
-		sess.adminKickPlayer(s, opt.get().getUsername());
+		sess.adminKickPlayer(s, opt.get().getName());
 	}
 
 }

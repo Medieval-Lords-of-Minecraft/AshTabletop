@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import me.neoblade298.ashtabletop.GamePlayer;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard.CardType;
@@ -20,7 +20,7 @@ import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.entity.Player;
 
 public class TheCrewPlayer extends GamePlayer {
 	private LinkedList<TheCrewCardInstance> hand = new LinkedList<TheCrewCardInstance>();
@@ -96,7 +96,7 @@ public class TheCrewPlayer extends GamePlayer {
 	public void displayHand(Player viewer) {
 		boolean isOwner = viewer.getUniqueId().equals(uuid);
 		
-		Builder b = Component.text().content((isOwner ? "Hand" : p.getUsername() + "'s hand") + ": ");
+		Builder b = Component.text().content((isOwner ? "Hand" : p.getName() + "'s hand") + ": ");
 		if (hand.isEmpty()) {
 			viewer.sendMessage(b.append(Component.text("Empty!")));
 			return;
@@ -230,7 +230,7 @@ public class TheCrewPlayer extends GamePlayer {
 	
 	// Only for spectators
 	public String createHandHoverText() {
-		String text = p.getUsername() + "'s hand:";
+		String text = p.getName() + "'s hand:";
 		if (hand.isEmpty()) text += " empty!";
 		else {
 			for (TheCrewCard card : hand) {

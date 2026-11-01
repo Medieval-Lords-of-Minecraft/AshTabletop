@@ -2,13 +2,13 @@ package me.neoblade298.ashtabletop.thecrew.tasks;
 
 import java.util.ArrayList;
 
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
@@ -17,7 +17,7 @@ public class NoOpenTrickTask extends TheCrewTask {
 	protected ArrayList<CardMatcher> cards = new ArrayList<CardMatcher>();
 	
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "cards: " + cards);
 	}
 	

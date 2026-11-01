@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
 import net.kyori.adventure.text.Component;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard.CardType;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.shared.io.Section;
 
 public class WinOneColorTask extends TheCrewTask {
@@ -19,7 +19,7 @@ public class WinOneColorTask extends TheCrewTask {
 	protected HashSet<CardType> colorsRemaining = new HashSet<CardType>();
 	
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "numWon: " + numWon);
 		Util.msgRaw(s, "colorsRemaining: " + colorsRemaining);
 	}

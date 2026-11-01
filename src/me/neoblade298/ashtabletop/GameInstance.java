@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -24,12 +24,20 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	
 	public abstract void handleLeave(GamePlayer gp);
 
+	protected void runLater(Runnable task, long seconds) {
+		AshTabletop.scheduler().runTaskLater(AshTabletop.inst(), () -> {
+			if (GameManager.getInstance(name) == this) {
+				task.run();
+			}
+		}, seconds * 20L);
+	}
+
 	@Override
-	public void adminKickPlayer(CommandSource s, String name) {
-		Player p = BungeeCore.proxy().getPlayer(name).get();
+	public void adminKickPlayer(CommandSender s, String name) {
+		Player p = AshTabletop.findPlayer(name).get();
 		GamePlayer gp = players.remove(name.toLowerCase());
 		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + p.getUsername() + " <gray>was kicked from the game by an admin!");
+		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the game by an admin!");
 		handleLeave(gp);
 	}
 	
@@ -47,17 +55,17 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 		
 		GamePlayer gp = players.remove(name.toLowerCase());
 		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + p.getUsername() + " <gray>was kicked from the game!");
+		broadcast("<yellow>" + p.getName() + " <gray>was kicked from the game!");
 		handleLeave(gp);
 	}
 
 	@Override
 	public void broadcast(String msg) {
 		for (GamePlayer gp : players.values()) {
-			Util.msgRaw(gp.getPlayer(), BungeeCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
+			Util.msgRaw(gp.getPlayer(), NeoCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
 		}
 		for (Player p : spectators) {
-			Util.msgRaw(p, BungeeCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
+			Util.msgRaw(p, NeoCore.miniMessage().deserialize(msg).colorIfAbsent(NamedTextColor.GRAY));
 		}
 	}
 	
@@ -72,10 +80,10 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 
 	@Override
 	public void leavePlayer(Player p) {
-		if (players.containsKey(p.getUsername().toLowerCase())) {
-			GamePlayer gp = players.remove(p.getUsername().toLowerCase());
+		if (players.containsKey(p.getName().toLowerCase())) {
+			GamePlayer gp = players.remove(p.getName().toLowerCase());
 			GameManager.removeFromSession(p.getUniqueId());
-			broadcast("<yellow>" + p.getUsername() + " <gray>left the lobby!");
+			broadcast("<yellow>" + p.getName() + " <gray>left the lobby!");
 			
 			if (p.getUniqueId().equals(host)) {
 				if (players.size() != 0) {
@@ -92,7 +100,7 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 		else if (spectators.contains(p)) {
 			spectators.remove(p);
 			GameManager.removeFromSession(p.getUniqueId());
-			broadcast("<yellow>" + p.getUsername() + " <gray>stopped spectating!");
+			broadcast("<yellow>" + p.getName() + " <gray>stopped spectating!");
 		}
 		else {
 			Util.displayError(p, "Something went wrong! You were unable to leave game " + name + ".");
@@ -106,7 +114,7 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	
 	public void addSpectator(Player p) {
 		spectators.add(p);
-		broadcast("<yellow>" + p.getUsername() + " <gray>began spectating!");
+		broadcast("<yellow>" + p.getName() + " <gray>began spectating!");
 		onSpectate(p);
 	}
 	
@@ -114,11 +122,11 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 		GameManager.endGame(onEnd(), this);
 	}
 	
-	public void displayKickList(CommandSource cmdUser) {
+	public void displayKickList(CommandSender cmdUser) {
 		Player p = (Player) cmdUser;
 		Util.msgRaw(cmdUser, Component.text("Players:", NamedTextColor.GRAY));
 		Component c = Component.text().content("- ").color(NamedTextColor.GRAY)
-				.append(Component.text(p.getUsername(), NamedTextColor.RED))
+				.append(Component.text(p.getName(), NamedTextColor.RED))
 				.append(Component.text(" ("))
 				.append(Component.text("Host", NamedTextColor.YELLOW))
 				.append(Component.text(")")).build();
@@ -152,6 +160,6 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	}
 	
 	public abstract void onSpectate(Player p);
-	public abstract void showDebug(CommandSource s);
+	public abstract void showDebug(CommandSender s);
 	public abstract GameLobby<T> onEnd();
 }

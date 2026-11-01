@@ -2,7 +2,7 @@ package me.neoblade298.ashtabletop;
 
 import java.util.UUID;
 
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.entity.Player;
 
 public class GamePlayer {
 	protected UUID uuid;
@@ -11,7 +11,7 @@ public class GamePlayer {
 	public GamePlayer(UUID uuid, Player p) {
 		super();
 		this.uuid = uuid;
-		this.name = p.getUsername();
+		this.name = p.getName();
 		this.p = p;
 	}
 	public UUID getUniqueId() {

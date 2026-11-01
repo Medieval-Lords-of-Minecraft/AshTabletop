@@ -1,9 +1,9 @@
 package me.neoblade298.ashtabletop.commands;
 
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.GameInstance;
@@ -22,7 +22,7 @@ public class CmdTabletopAdminDebug extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		GameInstance<? extends GamePlayer> inst = GameManager.getInstance(args[0]);
 		if (inst == null) {
 			Util.msg(s, Component.text("That instance doesn't exist!", NamedTextColor.RED));

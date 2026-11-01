@@ -6,13 +6,20 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import me.neoblade298.ashtabletop.GameInstance;
 import me.neoblade298.ashtabletop.GameLobby;
+import me.neoblade298.ashtabletop.GameManager;
 import me.neoblade298.ashtabletop.GamePlayer;
 import me.neoblade298.ashtabletop.AshTabletop;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard.CardType;
@@ -22,16 +29,14 @@ import me.neoblade298.ashtabletop.thecrew.tasks.WinTricksPredictTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scheduler.Scheduler;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
-	// Etc
-	private Scheduler sch = AshTabletop.scheduler();
 	
 	// Metadata
 	private int difficulty;
@@ -55,10 +60,10 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 		int sonarTokens = (int) params.get("sonar_tokens").get();
 		
 		for (UUID uuid : lobby.getPlayers()) {
-			Player p = AshTabletop.proxy().getPlayer(uuid).get();
+			Player p = AshTabletop.findPlayer(uuid).get();
 			TheCrewPlayer tcp = new TheCrewPlayer(uuid, p, this);
 			tcp.setSonarTokens(sonarTokens);
-			this.players.put(p.getUsername().toLowerCase(), tcp);
+			this.players.put(p.getName().toLowerCase(), tcp);
 		}
 		
 		setupGame();
@@ -82,11 +87,11 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 
 	@Override
 	public void displayInfo(Player viewer, Player viewed) {
-		if (!players.containsKey(viewer.getUsername().toLowerCase()) && (phase == GamePhase.LOSE || phase == GamePhase.PLAY)) {
+		if (!players.containsKey(viewer.getName().toLowerCase()) && (phase == GamePhase.LOSE || phase == GamePhase.PLAY)) {
 			displaySpectatorInfo(viewer);
 			return;
 		}
-		TheCrewPlayer p = players.get(viewer.getUsername().toLowerCase());
+		TheCrewPlayer p = players.get(viewer.getName().toLowerCase());
 		boolean isHost = p.getUniqueId().equals(host);
 		boolean viewerTurn = turnOrder.get(turn).getUniqueId().equals(viewer.getUniqueId());
 		
@@ -369,7 +374,7 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 			Player p = turnOrder.get(turn).getPlayer();
 			p.sendMessage(SharedUtil.createText("<dark_gray>[<gray>Click or hover to view accepted tasks</gray]",
 					createTaskHover(), ClickEvent.runCommand("/thecrew viewtasks")));
-			players.get(p.getUsername().toLowerCase()).displayHand(p);
+			players.get(p.getName().toLowerCase()).displayHand(p);
 			Util.msgRaw(p, "<gray>Choose a task:");
 			int num = 0;
 			for (TheCrewTask task : tasks) {
@@ -424,15 +429,15 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 		}
 		
 		pile.add(pile.size(), tcp.playCard(num));
-		Component c = SharedUtil.color("<yellow>" + p.getUsername() + " <gray>plays ");
+		Component c = SharedUtil.color("<yellow>" + p.getName() + " <gray>plays ");
 		broadcast(c.append(toPlay.getDisplay()));
 
 		int time = 1;
 		if (pile.size() == players.size()) {
-			sch.buildTask(AshTabletop.inst(), () -> {
+			runLater(() -> {
 				calculateTrickWinner();
 				advanceTurn();
-			}).delay(time, TimeUnit.SECONDS);
+			}, time);
 		}
 		else {
 			advanceTurn();
@@ -507,13 +512,13 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 		
 		if (win) {
 			phase = GamePhase.WIN;
-			sch.buildTask(AshTabletop.inst(), () -> {
+			runLater(() -> {
 				broadcast("<green>You won! Sending you back to lobby in 3 seconds...");
-			}).delay(1, TimeUnit.SECONDS);
+			}, 1);
 			
-			sch.buildTask(AshTabletop.inst(), () -> {
+			runLater(() -> {
 				endGame();
-			}).delay(4, TimeUnit.SECONDS);
+			}, 4);
 		}
 	}
 	
@@ -527,7 +532,7 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 			Util.displayError(p, "It's not your turn right now!");
 			return;
 		}
-		TheCrewPlayer tcp = players.get(p.getUsername().toLowerCase());
+		TheCrewPlayer tcp = players.get(p.getName().toLowerCase());
 		
 		// Special case for not allowing captain to choose captain comparison tasks
 		if (tasks.get(num) instanceof CompareWinsTask) {
@@ -537,30 +542,67 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 			}
 		}
 		
-		TheCrewTask task = tasks.remove(num);
+		TheCrewTask task = tasks.get(num);
 		
 		// Special case for predicting a task
 		if (task instanceof WinTricksPredictTask) {
-			BungeeCore.promptChatResponse(p, (e) -> {
-				String resp = e.getMessage();
-				if (SharedUtil.isNumeric(resp)) {
-					int amount = Integer.parseInt(resp);
-					if (amount < 0 || amount > totalRounds) {
-						Util.displayError(tcp.getPlayer(), "Your prediction must be a number between 0 and " + totalRounds + "!");
-						return false;
-					}
-					completeAcceptTask(task, tcp);
-					return true;
-				}
-				Util.displayError(tcp.getPlayer(), "Your prediction must be a number between 0 and " + totalRounds + "!");
-				return false;
-			});
-			((WinTricksPredictTask) task).clone(tcp, this, 1);
+			showPredictionDialog(p, (WinTricksPredictTask) task);
 		}
 		else {
+			tasks.remove(num);
 			tcp.addTask(task.clone(tcp, this));
 			completeAcceptTask(task, tcp);
 		}
+	}
+
+	private void showPredictionDialog(Player player, WinTricksPredictTask task) {
+		Dialog dialog = Dialog.create(builder -> builder.empty()
+				.base(DialogBase.builder(Component.text("Predict tricks won"))
+						.canCloseWithEscape(true)
+						.pause(false)
+						.afterAction(DialogBase.DialogAfterAction.CLOSE)
+						.body(java.util.List.of(DialogBody.plainMessage(
+								Component.text("Choose exactly how many tricks you'll win. Cancel leaves the task unassigned."))))
+						.inputs(java.util.List.of(DialogInput.numberRange(
+								"tricks", Component.text("Tricks won"), 0, totalRounds)
+								.initial(0.0F).step(1.0F).build()))
+						.build())
+				.type(DialogType.confirmation(
+						ActionButton.builder(Component.text("Accept task"))
+								.action(DialogAction.customClick((response, audience) -> {
+									if (!(audience instanceof Player)
+											|| !((Player) audience).getUniqueId().equals(player.getUniqueId())) {
+										audience.sendMessage(Component.text("This prediction belongs to another player.", NamedTextColor.RED));
+										return;
+									}
+									Player respondent = (Player) audience;
+									Float amount = response.getFloat("tricks");
+									AshTabletop.scheduler().runTask(AshTabletop.inst(),
+											() -> acceptPrediction(respondent, task, amount));
+								}, ClickCallback.Options.builder().uses(1).build()))
+								.build(),
+						ActionButton.builder(Component.text("Cancel")).build())));
+		player.showDialog(dialog);
+	}
+
+	void acceptPrediction(Player player, WinTricksPredictTask task, Float amount) {
+		if (!player.isOnline() || GameManager.getSession(player.getUniqueId()) != this
+				|| phase != GamePhase.SELECT_TASKS || !tasks.contains(task)
+				|| !turnOrder.get(turn).getUniqueId().equals(player.getUniqueId())) {
+			Util.displayError(player, "That prediction is no longer available. View the game to choose a task.");
+			return;
+		}
+		if (amount == null || !Float.isFinite(amount) || amount < 0 || amount > totalRounds
+				|| amount != Math.floor(amount)) {
+			Util.displayError(player, "Your prediction must be a whole number between 0 and " + totalRounds + "!");
+			showPredictionDialog(player, task);
+			return;
+		}
+		TheCrewPlayer owner = turnOrder.get(turn);
+		WinTricksPredictTask accepted = task.clone(owner, this, amount.intValue());
+		owner.addTask(accepted);
+		tasks.remove(task);
+		completeAcceptTask(accepted, owner);
 	}
 	
 	private void completeAcceptTask(TheCrewTask task, TheCrewPlayer tcp) {
@@ -593,7 +635,7 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 			return;
 		}
 		
-		broadcast("<yellow>" + p.getUsername() + " <gray>has chosen not to accept a task.");
+		broadcast("<yellow>" + p.getName() + " <gray>has chosen not to accept a task.");
 		advanceTurn();
 	}
 	
@@ -639,11 +681,11 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 		if (showRound) {
 			broadcast("Round " + round + "...");
 		}
-		sch.buildTask(AshTabletop.inst(), () -> {
+		runLater(() -> {
 			phase = temp;
 			promptPlayer();
 			broadcast("<yellow>" + turnOrder.get(turn).getName() + "<gray>'s turn");
-		}).delay(time, TimeUnit.SECONDS);
+		}, time);
 	}
 	
 	public void rerollTasks(Player p) {
@@ -664,26 +706,26 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 	
 	// Use time 2 for first setup, time 1 for reroll
 	private void rollTasks(int time) {
-		sch.buildTask(AshTabletop.inst(), () -> {
+		runLater(() -> {
 			broadcast("Rolling tasks...");
-		}).delay(time, TimeUnit.SECONDS);
+		}, time);
 
 		time += 2;
 		tasks = getTasks();
 		for (TheCrewTask task : tasks) {
-			sch.buildTask(AshTabletop.inst(), () -> {
+			runLater(() -> {
 				Component ct = Component.text("- ", NamedTextColor.GRAY).append(task.getDisplay())
 						.append(SharedUtil.color(" (Difficulty: <yellow>" + task.getDifficulty(players.size()) + "</yellow>)"));
 				broadcast(ct);
-			}).delay(time++, TimeUnit.SECONDS);
+			}, time++);
 		}
 
-		sch.buildTask(AshTabletop.inst(), () -> {
+		runLater(() -> {
 			broadcast("The captain is responsible for accepting tasks or rerolling! Note that some tasks "
 					+ "may be impossible together. Look carefully before accepting them!");
-		}).delay(time++, TimeUnit.SECONDS);
+		}, time++);
 
-		sch.buildTask(AshTabletop.inst(), () -> {
+		runLater(() -> {
 			Component accept = SharedUtil.createText("<dark_gray>[<green>Accept Tasks</green>] ", "Click to accept!",
 					ClickEvent.runCommand("/thecrew accepttasks"));
 			Component reroll = SharedUtil.createText("<dark_gray>[<red>Reroll Tasks</red>] ", "Click to reroll!",
@@ -691,7 +733,7 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 			
 			captain.getPlayer().sendMessage(accept.append(reroll));
 			phase = GamePhase.ROLL_TASKS;
-		}).delay(time, TimeUnit.SECONDS);
+		}, time);
 	}
 	
 	private Component createTaskHover() {
@@ -781,7 +823,7 @@ public class TheCrewInstance extends GameInstance<TheCrewPlayer> {
 	}
 
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "Round: " + round + ", Total Rounds: " + totalRounds + ", Phase: " + phase + ", Turn: " + turn);
 		Util.msgRaw(s, "Turn Order: " + turnOrder);
 		for (TheCrewPlayer p : turnOrder) {

@@ -2,8 +2,8 @@ package me.neoblade298.ashtabletop.thecrew.commands;
 
 import java.util.UUID;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.GameManager;
@@ -16,8 +16,8 @@ import me.neoblade298.ashtabletop.thecrew.tasks.CardMatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CmdTheCrewSonar extends Subcommand {
 
@@ -30,7 +30,7 @@ public class CmdTheCrewSonar extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();
 		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
@@ -40,7 +40,7 @@ public class CmdTheCrewSonar extends Subcommand {
 		}
 
 		TheCrewInstance inst = (TheCrewInstance) sess;
-		TheCrewPlayer tcp = inst.getPlayers().get(p.getUsername().toLowerCase());
+		TheCrewPlayer tcp = inst.getPlayers().get(p.getName().toLowerCase());
 		tcp.useSonarToken(new CardMatcher(args[0]), SonarType.valueOf(args[1]));
 	}
 

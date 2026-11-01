@@ -2,8 +2,8 @@ package me.neoblade298.ashtabletop.commands;
 
 import java.util.UUID;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.GameLobby;
 import me.neoblade298.ashtabletop.GameManager;
@@ -11,8 +11,8 @@ import me.neoblade298.ashtabletop.GamePlayer;
 import me.neoblade298.ashtabletop.GameSession;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CmdTabletopStart extends Subcommand {
 
@@ -23,7 +23,7 @@ public class CmdTabletopStart extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();
 		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);

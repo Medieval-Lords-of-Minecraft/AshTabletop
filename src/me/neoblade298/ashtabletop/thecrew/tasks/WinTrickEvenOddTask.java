@@ -2,21 +2,21 @@ package me.neoblade298.ashtabletop.thecrew.tasks;
 
 import java.util.ArrayList;
 
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
 import net.kyori.adventure.text.Component;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCard.CardType;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.shared.io.Section;
 
 public class WinTrickEvenOddTask extends TheCrewTask {
 	protected boolean even; // Either even or odd
 	
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "even: " + even);
 	}
 	

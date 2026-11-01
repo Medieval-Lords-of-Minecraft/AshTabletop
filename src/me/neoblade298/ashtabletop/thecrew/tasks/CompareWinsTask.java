@@ -2,12 +2,12 @@ package me.neoblade298.ashtabletop.thecrew.tasks;
 
 import java.util.ArrayList;
 
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.ashtabletop.thecrew.TheCrewCardInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewInstance;
 import me.neoblade298.ashtabletop.thecrew.TheCrewPlayer;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 
@@ -16,7 +16,7 @@ public class CompareWinsTask extends TheCrewTask {
 	protected CompareTo with;
 	
 	@Override
-	public void showDebug(CommandSource s) {
+	public void showDebug(CommandSender s) {
 		Util.msgRaw(s, "with: " + with + ", comp: " + comp);
 	}
 	

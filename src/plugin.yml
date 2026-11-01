@@ -1,0 +1,26 @@
+name: AshTabletop
+main: me.neoblade298.ashtabletop.AshTabletop
+version: 0.0.1-SNAPSHOT
+description: A suite of tabletop chat games for Paper 26.3.
+authors: [Ascheladd]
+website: https://ml-mc.com
+api-version: '26.3'
+depend: [NeoCore]
+commands:
+  tt:
+    description: Main tabletop command
+    usage: /tt
+    permission: tabletop.use
+  tta:
+    description: Tabletop administration
+    usage: /tta
+    permission: tabletop.admin
+  thecrew:
+    description: Commands for The Crew
+    usage: /thecrew
+    permission: tabletop.use
+permissions:
+  tabletop.use:
+    default: true
+  tabletop.admin:
+    default: op

@@ -4,12 +4,11 @@ import java.io.File;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.Util;
-import me.neoblade298.neocore.shared.chat.MiniMessageManager;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -23,18 +22,20 @@ public abstract class Game {
 	private final Component header;
 	
 	public Game(File baseDir) {
-		BungeeCore.loadFiles(new File(baseDir, "config.yml"), (cfg, file) -> {
+		NeoCore.loadFiles(new File(baseDir, "config.yml"), (cfg, file) -> {
 			key = cfg.getString("key");
 			name = cfg.getString("name");
 			desc = Component.text(cfg.getString("description"), NamedTextColor.GRAY);
 			minPlayers = cfg.getInt("min-players");
 			maxPlayers = cfg.getInt("max-players");
 		});
-		BungeeCore.loadFiles(new File(baseDir, "manual.yml"), (cfg, file) -> {
+		NeoCore.loadFiles(new File(baseDir, "manual.yml"), (cfg, file) -> {
 			manual = new Component[cfg.getKeys().size()];
 			int i = 0;
 			for (String key : cfg.getKeys()) {
-				manual[i++] = MiniMessageManager.parseFromYaml(cfg, key);
+				String text = cfg.isType(key, String.class)
+						? cfg.getString(key) : String.join("", cfg.getStringList(key));
+				manual[i++] = NeoCore.miniMessage().deserialize(text);
 			}
 		});
 		
@@ -47,7 +48,7 @@ public abstract class Game {
 		
 		String manualStr = "<dark_gray>[<gray><click:run_command:'/tt manual " +
 				key +"'><hover:show_text:'Click here to read the manual!'>Click to read the manual for the game!</hover></click></gray>]";
-		manualButton = BungeeCore.miniMessage().deserialize(manualStr);
+		manualButton = NeoCore.miniMessage().deserialize(manualStr);
 	}
 	
 	public String getKey() {
@@ -68,7 +69,7 @@ public abstract class Game {
 	public int getMaxPlayers() {
 		return maxPlayers;
 	}
-	public void displayInfo(CommandSource p) {
+	public void displayInfo(CommandSender p) {
 		Util.msgRaw(p, header);
 		Util.msgRaw(p, desc);
 		Util.msgRaw(p, footer);

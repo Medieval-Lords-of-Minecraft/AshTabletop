@@ -2,9 +2,9 @@ package me.neoblade298.ashtabletop.commands;
 
 import java.util.Map.Entry;
 
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.Game;
 import me.neoblade298.ashtabletop.GameManager;
@@ -22,7 +22,7 @@ public class CmdTabletopGames extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		Builder b = Component.text().content("List of games:").color(NamedTextColor.GRAY);
 		for (Entry<String, Game> ent : GameManager.getGames().entrySet()) {
 			b.appendNewline();

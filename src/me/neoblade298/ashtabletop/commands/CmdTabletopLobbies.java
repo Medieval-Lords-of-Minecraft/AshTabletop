@@ -1,24 +1,26 @@
 package me.neoblade298.ashtabletop.commands;
 
+import me.neoblade298.ashtabletop.AshTabletop;
+
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import me.neoblade298.ashtabletop.GameLobby;
 import me.neoblade298.ashtabletop.GameManager;
 import me.neoblade298.ashtabletop.GamePlayer;
-import com.velocitypowered.api.command.CommandSource;
+import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.entity.Player;
 
 public class CmdTabletopLobbies extends Subcommand {
 
@@ -28,7 +30,7 @@ public class CmdTabletopLobbies extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		if (GameManager.getLobbies().size() == 0) {
 			Util.msg(s, Component.text("There are currently no active lobbies!", NamedTextColor.RED));
 			return;
@@ -46,14 +48,14 @@ public class CmdTabletopLobbies extends Subcommand {
 	}
 
 	private Component createHoverText(GameLobby<? extends GamePlayer> lob) {
-		Player host = BungeeCore.proxy().getPlayer(lob.getHost()).get();
+		Player host = AshTabletop.findPlayer(lob.getHost()).get();
 		Builder b = Component.text().content(lob.isPublic() ? "Public Lobby" : "Private Lobby")
 				.color(lob.isPublic() ? NamedTextColor.GREEN : NamedTextColor.RED)
 				.append(Component.text("\nPlayercount: ", NamedTextColor.GRAY))
 				.append(Component.text(lob.getPlayers().size(), lob.isFull() ? NamedTextColor.GREEN : NamedTextColor.RED))
 				.append(Component.text(" / " + lob.getGame().getMaxPlayers()))
 				.append(Component.text("\n- "))
-				.append(Component.text(host.getUsername(), NamedTextColor.RED))
+				.append(Component.text(host.getName(), NamedTextColor.RED))
 				.append(Component.text(" ("))
 				.append(Component.text("Host", NamedTextColor.GOLD))
 				.append(Component.text(")"));
@@ -61,9 +63,9 @@ public class CmdTabletopLobbies extends Subcommand {
 		for (UUID uuid : lob.getPlayers()) {
 			if (uuid.equals(lob.getHost())) continue;
 			
-			Player p = BungeeCore.proxy().getPlayer(uuid).get();
+			Player p = AshTabletop.findPlayer(uuid).get();
 			b.append(Component.text("\n- "))
-				.append(Component.text(p.getUsername(), NamedTextColor.RED));
+				.append(Component.text(p.getName(), NamedTextColor.RED));
 		}
 		return b.build();
 	}

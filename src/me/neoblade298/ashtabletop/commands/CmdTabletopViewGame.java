@@ -1,15 +1,15 @@
 package me.neoblade298.ashtabletop.commands;
 
-import me.neoblade298.neocore.bungee.commands.Subcommand;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.ashtabletop.Game;
 import me.neoblade298.ashtabletop.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CmdTabletopViewGame extends Subcommand {
 
@@ -21,7 +21,7 @@ public class CmdTabletopViewGame extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSource s, String[] args) {
+	public void run(CommandSender s, String[] args) {
 		Game g = GameManager.getGame(args[0]);
 		if (g == null) {
 			Util.msg(s, Component.text("That game doesn't exist! Try using /tt games", NamedTextColor.RED));
