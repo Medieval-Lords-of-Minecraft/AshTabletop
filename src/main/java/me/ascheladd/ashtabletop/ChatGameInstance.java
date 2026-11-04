@@ -41,7 +41,7 @@ public abstract class ChatGameInstance<T extends GamePlayer> extends GameInstanc
 	}
 
 	protected boolean ready(Player player) {
-		if (!started || GameManager.getInstance(name) != this) {
+		if (!started || GameManager.getInstance(id) != this) {
 			Util.displayError(player, "The game is not ready.");
 			return false;
 		}

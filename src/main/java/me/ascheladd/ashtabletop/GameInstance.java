@@ -20,14 +20,14 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 	protected HashMap<String, T> players = new HashMap<String, T>();
 	protected HashSet<Player> spectators = new HashSet<Player>();
 	public GameInstance(GameLobby<T> lobby) {
-		super(lobby.getName(), lobby.getGame(), lobby.getHost(), lobby.isPublic(), lobby.getParameters());
+		super(lobby);
 	}
 	
 	public abstract void handleLeave(GamePlayer gp);
 
 	protected void runLater(Runnable task, long seconds) {
 		AshTabletop.scheduler().runTaskLater(AshTabletop.inst(), () -> {
-			if (GameManager.getInstance(name) == this) {
+			if (GameManager.getInstance(id) == this) {
 				task.run();
 			}
 		}, seconds * 20L);
@@ -35,15 +35,13 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 
 	@Override
 	public void adminKickPlayer(CommandSender s, String name) {
-		GamePlayer gp = players.remove(name.toLowerCase(Locale.ROOT));
+		GamePlayer gp = players.get(name.toLowerCase(Locale.ROOT));
 		if (gp == null) {
 			Util.msgRaw(s, Component.text("That player isn't in this game!", NamedTextColor.RED));
 			return;
 		}
-		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + gp.getName() + " <gray>was kicked from the game by an admin!");
-		replaceHost(gp);
-		handleLeave(gp);
+		removePlayer(gp, Component.text(gp.getName(), NamedTextColor.YELLOW)
+				.append(Component.text(" was kicked from the game by an admin!", NamedTextColor.GRAY)));
 	}
 	
 	@Override
@@ -53,16 +51,14 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 			return;
 		}
 		
-		if (!players.containsKey(name.toLowerCase())) {
+		GamePlayer gp = players.get(name.toLowerCase(Locale.ROOT));
+		if (gp == null) {
 			Util.displayError(p, "That player isn't in your game!");
 			return;
 		}
 		
-		GamePlayer gp = players.remove(name.toLowerCase());
-		GameManager.removeFromSession(gp.getUniqueId());
-		broadcast("<yellow>" + gp.getName() + " <gray>was kicked from the game!");
-		replaceHost(gp);
-		handleLeave(gp);
+		removePlayer(gp, Component.text(gp.getName(), NamedTextColor.YELLOW)
+				.append(Component.text(" was kicked from the game!", NamedTextColor.GRAY)));
 	}
 
 	@Override
@@ -90,22 +86,10 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 
 	@Override
 	public void leavePlayer(Player p) {
-		if (players.containsKey(p.getName().toLowerCase())) {
-			GamePlayer gp = players.remove(p.getName().toLowerCase());
-			GameManager.removeFromSession(p.getUniqueId());
-			broadcast("<yellow>" + p.getName() + " <gray>left the game!");
-			
-			if (p.getUniqueId().equals(host)) {
-				if (players.size() != 0) {
-					GamePlayer next = players.values().iterator().next();
-					host = next.getUniqueId();
-					broadcast("Because the host left, the new host is now <yellow>" + next.getName() + "</yellow>!");
-				}
-				else {
-					
-				}
-			}
-			handleLeave(gp);
+		GamePlayer gp = players.get(p.getName().toLowerCase(Locale.ROOT));
+		if (gp != null) {
+			removePlayer(gp, Component.text(gp.getName(), NamedTextColor.YELLOW)
+					.append(Component.text(" left the game!", NamedTextColor.GRAY)));
 		}
 		else if (spectators.contains(p)) {
 			spectators.remove(p);
@@ -113,8 +97,20 @@ public abstract class GameInstance<T extends GamePlayer> extends GameSession<T> 
 			broadcast("<yellow>" + p.getName() + " <gray>stopped spectating!");
 		}
 		else {
-			Util.displayError(p, "Something went wrong! You were unable to leave game " + name + ".");
+			Util.displayError(p, "Something went wrong! You were unable to leave " + getName() + ".");
 			return;
+		}
+	}
+
+	private void removePlayer(GamePlayer gp, Component announcement) {
+		players.remove(gp.getName().toLowerCase(Locale.ROOT));
+		GameManager.removeFromSession(gp.getUniqueId());
+		broadcast(announcement);
+		replaceHost(gp);
+		handleLeave(gp);
+		if (players.size() <= 1 && GameManager.getInstance(id) == this) {
+			broadcast(Component.text("The game is ending because fewer than two players remain.", NamedTextColor.YELLOW));
+			endGame();
 		}
 	}
 	

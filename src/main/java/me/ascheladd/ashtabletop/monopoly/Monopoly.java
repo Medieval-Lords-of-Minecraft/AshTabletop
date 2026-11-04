@@ -167,7 +167,7 @@ public class Monopoly extends Game {
 	public static Monopoly inst() { return instance; }
 
 	@Override
-	public GameLobby<? extends GamePlayer> createLobby(String name, UUID host, boolean isPublic) {
-		return new MonopolyLobby(name, host, isPublic);
+	public GameLobby<? extends GamePlayer> createLobby(UUID host, boolean isPublic) {
+		return new MonopolyLobby(host, isPublic);
 	}
 }

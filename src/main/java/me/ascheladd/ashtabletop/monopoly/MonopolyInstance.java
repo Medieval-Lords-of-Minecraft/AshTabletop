@@ -398,7 +398,7 @@ public class MonopolyInstance extends ChatGameInstance<MonopolyPlayer> {
 
 	private void land(MonopolyPlayer gp, int dice, boolean special, int depth) {
 		if (depth > 40) {
-			AshTabletop.logger().severe("Monopoly configuration creates a non-terminating movement-card chain in " + name);
+			AshTabletop.logger().severe("Monopoly configuration creates a non-terminating movement-card chain in " + getName());
 			started = false;
 			revision++;
 			GameManager.disbandInstance(this, "an invalid movement-card chain in the Monopoly configuration");

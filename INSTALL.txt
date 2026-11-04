@@ -47,8 +47,12 @@ Configuration errors are logged and prevent the plugin from enabling.
 The Crew's config.yml, manual.yml and tasks.yml are also bundled as described
 above. Its older nested manual format and the newer page format are supported.
 
-Create a lobby: /tt create monopoly <name> or /tt create uno <name>.
-Use /tt invite <player>, /tt join <name>, then /tt start.
+Create a lobby: /tt create <game> (monopoly, uno or thecrew).
+An optional public/private argument controls visibility; the default is private.
+Lobbies are automatically displayed as "<host>'s <game> lobby" and follow host changes.
+Use /tt invite <player>, /tt join <player>, then /tt start.
+Join targets any player in the lobby; /tt lobbies also offers clickable entries.
+/tta disband <player> and /tta debug <player> target that player's session.
 Before starting, the host can use /tt set money <amount> for Monopoly
 (default 6000), or /tt set points <score> for Uno (0 = continuous rounds).
 Read /tt manual monopoly or /tt manual uno for gameplay and command details.
@@ -57,9 +61,11 @@ remain available. Closing a dialog makes no gameplay choice.
 
 Disconnected players retain their game seats. Play waits when an offline
 player's action is required; the host may remove them with /tt kick <player>.
-They can reconnect to resume. /tt leave exits; /tt spectate <name> watches.
+They can reconnect to resume. /tt leave exits; /tt spectate <player> watches.
 The host can use /tt return to return online players to a lobby. Offline
 players are removed when the game ends. Games do not persist across restarts.
+Leaving a game (/tt leave, /uno quit or /mono quit) or being kicked announces
+the departure to players and spectators. Games end when at most one player remains.
 
 The ports retain the sibling games' house rules: Monopoly starts at $6000,
 unmortgaging costs the property's full price, and the third failed jail roll

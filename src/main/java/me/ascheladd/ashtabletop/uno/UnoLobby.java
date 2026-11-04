@@ -8,8 +8,8 @@ import me.ascheladd.ashtabletop.GameParameter;
 import me.ascheladd.ashtabletop.IntegerParameterSetter;
 
 public class UnoLobby extends GameLobby<UnoPlayer> {
-	public UnoLobby(String name, UUID host, boolean isPublic) {
-		super(name, Uno.inst(), host, isPublic);
+	public UnoLobby(UUID host, boolean isPublic) {
+		super(Uno.inst(), host, isPublic);
 		params.put("points", new GameParameter("points", "Winning score",
 				"0 plays continuous rounds; otherwise the first player to reach this score wins.",
 				0, new IntegerParameterSetter(0, 100000)));

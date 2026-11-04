@@ -1,6 +1,8 @@
 package me.ascheladd.ashtabletop.commands;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
@@ -12,7 +14,6 @@ import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import me.ascheladd.ashtabletop.Game;
-import me.ascheladd.ashtabletop.GameLobby;
 import me.ascheladd.ashtabletop.GameManager;
 import me.ascheladd.ashtabletop.GamePlayer;
 import me.ascheladd.ashtabletop.GameSession;
@@ -21,40 +22,34 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdTabletopCreate extends Subcommand {
 
-	// /tt create [game] [name] {public/private}
+	// /tt create [game] {public/private}
 	public CmdTabletopCreate(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
 		Arg ga = new Arg("game");
 		ga.setTabOptions(new ArrayList<String>(GameManager.getGames().keySet()));
 		args.add(ga);
-		args.add(new Arg("name"));
-		args.add(new Arg("public/private", false));
+		Arg visibility = new Arg("public/private", false);
+		visibility.setTabOptions(new ArrayList<String>(List.of("public", "private")));
+		args.add(visibility);
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
-		String game = args[0].toLowerCase();
+		String game = args[0].toLowerCase(Locale.ROOT);
 		Player p = (Player) s;
 		UUID uuid = p.getUniqueId();
-		boolean isPublic = false;
 		
-		if (args.length > 2) {
-			if (args[2].equalsIgnoreCase("public")) {
-				isPublic = true;
-			}
-		}
-		
-		// Check if the name exists already, or player is already in a game
-		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
-		if (sess != null) {
-			String sessionType = sess instanceof GameLobby ? "lobby" : "instance";
-			Util.msg(s, SharedUtil
-					.color("<red>You're already in " + sessionType + " <yellow>" + sess.getName() 
-					+ " </yellow>for game <yellow>" + sess.getGame().getName() + "</yellow>!"));
+		if (args.length > 2 || (args.length == 2 && !args[1].equalsIgnoreCase("public")
+				&& !args[1].equalsIgnoreCase("private"))) {
+			Util.displayError(p, "Use /tt create <game> [public|private]. Lobby names are no longer used.");
 			return;
 		}
-		else if (GameManager.sessionExists(args[1])) {
-			Util.msg(s, SharedUtil.color("<red>The name <yellow>" + args[1] + "</yellow> is already taken!"));
+		boolean isPublic = args.length == 2 && args[1].equalsIgnoreCase("public");
+		
+		GameSession<? extends GamePlayer> sess = GameManager.getSession(uuid);
+		if (sess != null) {
+			Util.msg(s, SharedUtil
+					.color("<red>You're already in <yellow>" + sess.getName() + "</yellow>!"));
 			return;
 		}
 		Game g = GameManager.getGame(game);
@@ -63,7 +58,7 @@ public class CmdTabletopCreate extends Subcommand {
 			return;
 		}
 
-		GameManager.createLobby(args[1], p, g, isPublic);
+		GameManager.createLobby(p, g, isPublic);
 	}
 
 }

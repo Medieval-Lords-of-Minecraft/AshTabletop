@@ -14,10 +14,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdTabletopAdminDebug extends Subcommand {
 
-	// /tt debug [instance name]
+	// /tta debug [player]
 	public CmdTabletopAdminDebug(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("session name"));
+		args.add(new Arg("player"));
 		hidden = true;
 	}
 
@@ -25,7 +25,7 @@ public class CmdTabletopAdminDebug extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		GameInstance<? extends GamePlayer> inst = GameManager.getInstance(args[0]);
 		if (inst == null) {
-			Util.msg(s, Component.text("That instance doesn't exist!", NamedTextColor.RED));
+			Util.msg(s, Component.text("That player isn't in an active tabletop game!", NamedTextColor.RED));
 			return;
 		}
 

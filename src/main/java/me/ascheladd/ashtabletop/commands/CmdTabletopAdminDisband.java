@@ -14,17 +14,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdTabletopAdminDisband extends Subcommand {
 
-	// /tta disband [name]
+	// /tta disband [player]
 	public CmdTabletopAdminDisband(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("name"));
+		args.add(new Arg("player"));
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
 		GameSession<? extends GamePlayer> sess = GameManager.getSession(args[0]);
 		if (sess == null) {
-			Util.msg(s, Component.text("That instance doesn't exist!", NamedTextColor.RED));
+			Util.msg(s, Component.text("That player isn't in a tabletop session!", NamedTextColor.RED));
 			return;
 		}
 

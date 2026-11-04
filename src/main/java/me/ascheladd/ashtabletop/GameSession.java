@@ -2,8 +2,10 @@ package me.ascheladd.ashtabletop;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,24 +15,33 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public abstract class GameSession<T extends GamePlayer> {
-	protected String name;
+	protected final UUID id;
 	protected Game game;
 	protected UUID host;
 	protected boolean isPublic;
 	protected HashMap<String, GameParameter> params = new HashMap<String, GameParameter>();
-	public GameSession(String name, Game game, UUID host, boolean isPublic) {
-		this.name = name;
+	public GameSession(Game game, UUID host, boolean isPublic) {
+		this.id = UUID.randomUUID();
 		this.game = game;
 		this.host = host;
 		this.isPublic = isPublic;
 	}
-	public GameSession(String name, Game game, UUID host, boolean isPublic, HashMap<String, GameParameter> params) {
-		this(name, game, host, isPublic);
-		this.params = params;
+	public GameSession(GameSession<T> session) {
+		this.id = session.id;
+		this.game = session.game;
+		this.host = session.host;
+		this.isPublic = session.isPublic;
+		this.params = session.params;
 	}
 	public abstract void broadcast(String msg);
+	public UUID getId() {
+		return id;
+	}
+	public String getHostName() {
+		return Objects.requireNonNull(Bukkit.getOfflinePlayer(host).getName(), "Session host has no known player name.");
+	}
 	public String getName() {
-		return name;
+		return getHostName() + "'s " + game.getName() + " lobby";
 	}
 	public Game getGame() {
 		return game;

@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 
 public class CmdTabletopJoin extends Subcommand {
 
-	// /tt join [name]
+	// /tt join [player]
 	public CmdTabletopJoin(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("name"));
+		args.add(new Arg("player"));
 		hidden = true;
 	}
 
@@ -35,7 +35,7 @@ public class CmdTabletopJoin extends Subcommand {
 				Util.msg(s, Component.text("That lobby already started its game!", NamedTextColor.RED));
 			}
 			else {
-				Util.msg(s, Component.text("That lobby doesn't exist!", NamedTextColor.RED));
+				Util.msg(s, Component.text("That player isn't in a lobby!", NamedTextColor.RED));
 			}
 			return;
 		}

@@ -16,10 +16,10 @@ import org.bukkit.entity.Player;
 
 public class CmdTabletopSpectate extends Subcommand {
 
-	// /tt spectate [name]
+	// /tt spectate [player]
 	public CmdTabletopSpectate(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("name"));
+		args.add(new Arg("player"));
 		hidden = true;
 	}
 
@@ -34,7 +34,7 @@ public class CmdTabletopSpectate extends Subcommand {
 
 		GameInstance<? extends GamePlayer> inst = GameManager.getInstance(args[0]);
 		if (inst == null) {
-			Util.msg(s, Component.text("Couldn't find that game instance! Maybe the game is still in lobby phase?", NamedTextColor.RED));
+			Util.msg(s, Component.text("That player isn't in an active game! Maybe the game is still in lobby phase?", NamedTextColor.RED));
 			return;
 		}
 		

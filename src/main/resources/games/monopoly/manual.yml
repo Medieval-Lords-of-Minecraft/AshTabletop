@@ -1,6 +1,6 @@
 1:
   - '<gold>Monopoly</gold><newline>'
-  - 'Create: /tt create monopoly [lobby]. Invite/join with /tt, then /tt start.<newline>'
+  - 'Create: /tt create monopoly. Invite with /tt invite [player] or join with /tt join [player], then /tt start.<newline>'
   - 'The host can set starting cash with /tt set money [amount]; default $6000.<newline>'
   - 'Roll with /mono roll to decide turn order, then to move. Resolve purchases, bills and jail before /mono end.<newline>'
   - 'Buy unowned property with /mono buy or /mono auction. Bid with /mono bid [amount]; withdraw with /mono auction leave. Auctions end when only the highest bidder remains.'

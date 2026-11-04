@@ -33,8 +33,8 @@ public class ChatGameCommand implements TabExecutor {
 		}
 		if (!(GameManager.getSession(player.getUniqueId()) instanceof ChatGameInstance<?> instance)
 				|| !instance.getGame().getKey().equals(game)) {
-			Util.displayError(player, "Join a " + game + " game using /tt create " + game + " <lobby>"
-					+ ", /tt join <lobby>, and /tt start. Use /tt for lobby management.");
+			Util.displayError(player, "Create a " + game + " game using /tt create " + game
+					+ " or join with /tt join <player>, then /tt start. Use /tt for lobby management.");
 			return true;
 		}
 		instance.execute(player, args);

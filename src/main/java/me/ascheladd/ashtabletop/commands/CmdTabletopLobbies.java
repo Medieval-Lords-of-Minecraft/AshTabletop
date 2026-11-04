@@ -2,7 +2,6 @@ package me.ascheladd.ashtabletop.commands;
 
 import me.ascheladd.ashtabletop.AshTabletop;
 
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
@@ -36,12 +35,10 @@ public class CmdTabletopLobbies extends Subcommand {
 			return;
 		}
 		Builder b = Component.text("List of Lobbies (click to join):", NamedTextColor.GRAY).toBuilder();
-		for (Entry<String, GameLobby<? extends GamePlayer>> ent : GameManager.getLobbies().entrySet()) {
-			GameLobby<? extends GamePlayer> lob = ent.getValue();
-			Component c = SharedUtil.color("\n<gray>- <red>" + lob.getName() + " </red>(<gold>" +
-					lob.getGame().getName() + "</gold>)");
+		for (GameLobby<? extends GamePlayer> lob : GameManager.getLobbies().values()) {
+			Component c = SharedUtil.color("\n<gray>- <red>" + lob.getName() + "</red>");
 			c = c.hoverEvent(HoverEvent.showText(createHoverText(lob)));
-			c = c.clickEvent(ClickEvent.runCommand("/tt join " + lob.getName()));
+			c = c.clickEvent(ClickEvent.runCommand("/tt join " + lob.getHostName()));
 			b.append(c);
 		}
 		s.sendMessage(b.build());

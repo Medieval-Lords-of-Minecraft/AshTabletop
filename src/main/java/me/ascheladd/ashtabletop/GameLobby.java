@@ -19,13 +19,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 	protected HashSet<UUID> players = new HashSet<UUID>(), invited = new HashSet<UUID>();
 
-	public GameLobby(String name, Game game, UUID host, boolean isPublic) {
-		super(name, game, host, isPublic);
+	public GameLobby(Game game, UUID host, boolean isPublic) {
+		super(game, host, isPublic);
 		players.add(host);
 	}
 	
 	public GameLobby(GameInstance<T> inst) {
-		super(inst.getName(), inst.getGame(), inst.getHost(), inst.isPublic(), inst.getParameters());
+		super(inst);
 	}
 
 	public void startGame(Player s) {
@@ -64,14 +64,14 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 		broadcast("<yellow>" + recipient.get().getName() + " <gray>was invited to the lobby!");
 
 		Util.msg(recipient.get(), NeoCore.miniMessage()
-				.deserialize("<gray>You've been invited to lobby <yellow>" + name + " </yellow>for <yellow>" + game.getName() + "</yellow>!"));
+				.deserialize("<gray>You've been invited to <yellow>" + getName() + "</yellow>!"));
 		
 		
 		Component c = Component.text().content("[").color(NamedTextColor.DARK_GRAY)
 				.append(Component.text("Click here to accept the invite!", NamedTextColor.GREEN))
 				.append(Component.text("]")).build();
 		c = c.hoverEvent(HoverEvent.showText(Component.text("Click to accept invite")));
-		c = c.clickEvent(ClickEvent.runCommand("/tt join " + name));
+		c = c.clickEvent(ClickEvent.runCommand("/tt join " + getHostName()));
 		recipient.get().sendMessage(c);
 	}
 
@@ -154,7 +154,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 	@Override
 	public void displayInfo(Player viewer, Player viewed) {
 		Util.msgRaw(viewer, NeoCore.miniMessage()
-				.deserialize("<gray><< <red>" + name + " </red>(<gold>" + game.getName() + "</gold>) >>"));
+				.deserialize("<gray><< <red>" + getName() + "</red> >>"));
 		Optional<Player> h = AshTabletop.findPlayer(host);
 		boolean isHost = h.isPresent() && viewer.getUniqueId().equals(host);
 		Component c = NeoCore.miniMessage()
@@ -216,7 +216,7 @@ public abstract class GameLobby<T extends GamePlayer> extends GameSession<T> {
 
 		c = SharedUtil.color("<dark_gray>[<gray>Click here to read about the game!</gray>]");
 		c = c.hoverEvent(HoverEvent.showText(Component.text("Click me!")));
-		c = c.clickEvent(ClickEvent.suggestCommand("/tt viewgame " + game.getKey()));
+		c = c.clickEvent(ClickEvent.runCommand("/tt viewgame " + game.getKey()));
 		if (viewer.getUniqueId().equals(host)) {
 			Component start = SharedUtil.color("<dark_gray>[<green>Click here to start!</green>] ");
 			start = start.hoverEvent(HoverEvent.showText(Component.text("Click me to start!")));

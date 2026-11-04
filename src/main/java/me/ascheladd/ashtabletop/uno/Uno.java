@@ -24,7 +24,7 @@ public class Uno extends Game {
 	}
 
 	@Override
-	public GameLobby<? extends GamePlayer> createLobby(String name, UUID host, boolean isPublic) {
-		return new UnoLobby(name, host, isPublic);
+	public GameLobby<? extends GamePlayer> createLobby(UUID host, boolean isPublic) {
+		return new UnoLobby(host, isPublic);
 	}
 }

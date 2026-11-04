@@ -10,8 +10,8 @@ import me.ascheladd.ashtabletop.IntegerParameterSetter;
 
 public class TheCrewLobby extends GameLobby<TheCrewPlayer> {
 
-	public TheCrewLobby(String name, UUID host, boolean isPublic) {
-		super(name, TheCrew.inst(), host, isPublic);
+	public TheCrewLobby(UUID host, boolean isPublic) {
+		super(TheCrew.inst(), host, isPublic);
 		
 		params.put("difficulty", new GameParameter("difficulty", "Difficulty",
 				"Affects how many conditions you must pass to win. Can be 1-25.",

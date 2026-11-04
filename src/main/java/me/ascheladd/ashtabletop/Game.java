@@ -150,5 +150,5 @@ public abstract class Game {
 		}
 		p.sendMessage(manual[page]);
 	}
-	public abstract GameLobby<? extends GamePlayer> createLobby(String name, UUID uuid, boolean isPublic);
+	public abstract GameLobby<? extends GamePlayer> createLobby(UUID uuid, boolean isPublic);
 }
