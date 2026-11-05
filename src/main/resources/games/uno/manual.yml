@@ -2,6 +2,7 @@
   - '<gold>Uno</gold><newline>'
   - 'Create with /tt create uno, invite with /tt invite [player] or join with /tt join [player], then /tt start. Each player receives seven cards.<newline>'
   - 'Click cards in /uno hand or use /uno play [alias]: 7r, skipb, reverseg, +2y, wild or +4. Colors are r/b/g/y.<newline>'
+  - 'A bold yellow YOUR TURN line below your hand highlights when you must act and explains your next action.<newline>'
   - 'Match the active color or card type. Wild cards match anything. Pending draws may be stacked with matching +2/+4 cards or taken with /uno draw, which skips your turn.<newline>'
   - 'A normal draw automatically plays the drawn card if it matches; otherwise it stays in your hand. Skip skips one player; reverse reverses direction (with two players, the other player goes next, as in NeoUno).'
   - 'Discarded cards are reshuffled when needed. If all drawable cards are held in hands, a fresh deck is added following the sibling game, so stacked draws cannot deadlock.'

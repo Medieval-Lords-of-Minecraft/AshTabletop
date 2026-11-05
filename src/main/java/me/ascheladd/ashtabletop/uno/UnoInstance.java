@@ -17,6 +17,7 @@ import me.neoblade298.neocore.bukkit.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public class UnoInstance extends ChatGameInstance<UnoPlayer> {
 	private final List<UnoPlayer> order = new ArrayList<>();
@@ -297,6 +298,13 @@ public class UnoInstance extends ChatGameInstance<UnoPlayer> {
 		}
 		viewer.sendMessage(hand.append(button("Draw", "/uno draw")).append(button("Uno", "/uno uno"))
 				.append(button("Dialog", "/uno menu")));
+		if (owner == current()) {
+			String prompt = choosingColor ? "Choose a color with /uno color <r|b|g|y> or /uno menu."
+					: pendingDraw > 0 ? "Stack a matching draw card or draw " + pendingDraw + " cards with /uno draw."
+					: "Play a matching card or use /uno draw. Open /uno menu for choices.";
+			viewer.sendMessage(Component.text(">>> YOUR TURN! <<<", NamedTextColor.YELLOW, TextDecoration.BOLD)
+					.append(Component.text(" " + prompt, NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, false)));
+		}
 	}
 
 	@Override
